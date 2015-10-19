@@ -77,9 +77,15 @@
     <Folder Include="GFxUI\Classes\" />
     <Folder Include="IpDrv\" />
     <Folder Include="IpDrv\Classes\" />
+    <Folder Include="Lab06\classes" />
+    <Folder Include="Lab5\" />
+    <Folder Include="Lab5\classes\" />
+    <Folder Include="LabExample\" />
+    <Folder Include="LabExample\classes\" />
     <Folder Include="MyMod2\" />
     <Folder Include="MyMod2\Classes\" />
     <Folder Include="Foobar" />
+    <Folder Include="Lab06" />
     <Folder Include="OnlineSubsystemGameCenter\" />
     <Folder Include="OnlineSubsystemGameCenter\Classes\" />
     <Folder Include="OnlineSubsystemGameCircle\" />
