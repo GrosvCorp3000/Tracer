@@ -1,14 +1,15 @@
 class L6Player extends UTPlayerController;
 
 var int MsgCalled;
+var Pawn closestPawn;
 
-function float IncrementSpecialMessage(int a, int b)
+function IncrementSpecialMessage()
 {
-    local float ret;
-    ret = a + b;
-    return ret;
+    MsgCalled++;
+	`log("IncrementSpecialMessage() function called!!!!!!!!!!!!!!!!!!!!!!!");
 }
 
 DefaultProperties
 {
+	bBehindView = true
 }
