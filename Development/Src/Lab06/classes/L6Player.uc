@@ -49,6 +49,8 @@ event PlayerTick( float DeltaTime )
 	log( "Physics:" );
 	foreach AllActors( class 'Pawn', A )
 	{
+		pawn
+		A.location
 		cloestPawn = A;
 		if( A.Physics != PHYS_Interpolating )
 			log( A );
