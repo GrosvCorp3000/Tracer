@@ -16,10 +16,26 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 
 	// current camera lock
 	//out_CamLoc = vect(0, 0, 50);
-	out_CamLoc = location + vect(0, -500, 0);
+	//out_CamLoc = location + vect(-500, -500, 400);
+
+	local L6Player p;
+
+	out_CamLoc = location;
+
+	p = L6Player (Controller);
+	if (p != None) {
+		out_CamLoc += p.offset;
+	}
+	
+
+
+	//out_CamRot = rot(-8192, 8192, 0);
+	out_CamRot = rotator(normal(location - out_CamLoc));
+	//Pitch, Yaw, Roll;
 	return true;
 }
 
 DefaultProperties
 {
+
 }
