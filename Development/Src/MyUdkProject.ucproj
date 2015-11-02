@@ -69,6 +69,7 @@
     <Folder Include="Engine\" />
     <Folder Include="Engine\Classes\" />
     <Folder Include="Foobar\Classes" />
+    <Folder Include="G6_GAM537\classes" />
     <Folder Include="GameFramework\" />
     <Folder Include="GameFramework\Classes\" />
     <Folder Include="GFxUIEditor\" />
@@ -88,6 +89,7 @@
     <Folder Include="MyMod2\Classes\" />
     <Folder Include="Foobar" />
     <Folder Include="Lab06" />
+    <Folder Include="G6_GAM537" />
     <Folder Include="OnlineSubsystemGameCenter\" />
     <Folder Include="OnlineSubsystemGameCenter\Classes\" />
     <Folder Include="OnlineSubsystemGameCircle\" />
