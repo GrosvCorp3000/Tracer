@@ -81,6 +81,7 @@
     <Folder Include="Lab06\classes" />
     <Folder Include="Lab06_2\" />
     <Folder Include="Lab06_2\classes\" />
+    <Folder Include="Lab07\classes" />
     <Folder Include="Lab5\" />
     <Folder Include="Lab5\classes\" />
     <Folder Include="LabExample\" />
@@ -90,6 +91,7 @@
     <Folder Include="Foobar" />
     <Folder Include="Lab06" />
     <Folder Include="G6_GAM537" />
+    <Folder Include="Lab07" />
     <Folder Include="OnlineSubsystemGameCenter\" />
     <Folder Include="OnlineSubsystemGameCenter\Classes\" />
     <Folder Include="OnlineSubsystemGameCircle\" />
