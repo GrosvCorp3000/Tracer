@@ -6,5 +6,4 @@ DefaultProperties
 	bUseClassicHUD = true
 	HUDType=class'L6HUB'
 	MapPrefixes[0] = "L6"
-	DefaultPawnClass = class'L6Pawn' 
 }

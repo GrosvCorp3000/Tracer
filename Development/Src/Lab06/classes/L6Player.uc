@@ -2,68 +2,34 @@ class L6Player extends UTPlayerController;
 
 var int MsgCalled;
 var Pawn closestPawn;
-var vector offset;
 
-function IncrementSpecialMessage()
+exec function IncrementSpecialMessage()
 {
     MsgCalled++;
 	`log("IncrementSpecialMessage() function called!!!!!!!!!!!!!!!!!!!!!!!");
 }
 
-exec function IncX()
-{
-	offset.X += 100;
-}
 
-exec function DecX()
+function PlayerTick( float DeltaTime )
 {
-	offset.X -= 100;
-}
-
-exec function IncY()
-{
-	offset.Y += 100;
-}
-
-exec function DecY()
-{
-	offset.Y += 100;
-}
-
-exec function IncZ()
-{
-	offset.Z += 100;
-}
-
-exec function DecZ()
-{
-	offset.Z -= 100;
-}
-
-event PlayerTick( float DeltaTime )
-{
-	
 	local Pawn A;
+
+	// Go through all pawns in the level.
 	
-	// Go through all actors in the level.
-	log( "Physics:" );
-	foreach AllActors( class 'Pawn', A )
+	foreach AllActors( class'Pawn', A )
 	{
-		pawn
-		A.location
-		cloestPawn = A;
-		if( A.Physics != PHYS_Interpolating )
-			log( A );
+		if (A != Pawn && A.IsAliveAndWell()) {
+			if (closestPawn == none || (VSize(A.Location - Pawn.location) < VSize(closestPawn.Location - Pawn.location))) {
+				closestPawn = A;
+			}
+		}
 	}
-	local NavigationPoint point;
-    foreach AllActors(class'NavigationPoint', point)
-    {
-        `Log("Iterating over navigation point "$point);
-    }
+	
+	super.PlayerTick(DeltaTime);
 }
+
 
 DefaultProperties
 {
-	bBehindView = true
-	offset = (Y=-500, x=-500, z=400)
+		MsgCalled = 0;
 }

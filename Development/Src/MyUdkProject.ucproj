@@ -78,6 +78,8 @@
     <Folder Include="IpDrv\" />
     <Folder Include="IpDrv\Classes\" />
     <Folder Include="Lab06\classes" />
+    <Folder Include="Lab06_2\" />
+    <Folder Include="Lab06_2\classes\" />
     <Folder Include="Lab5\" />
     <Folder Include="Lab5\classes\" />
     <Folder Include="LabExample\" />

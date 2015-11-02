@@ -1,4 +1,5 @@
-class L6Pawn extends UTPawn;
+class L62Pawn extends UTPawn;
+
 
 /**
  *	Calculate camera view point, when viewing this pawn.
@@ -18,20 +19,23 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 	//out_CamLoc = vect(0, 0, 50);
 	//out_CamLoc = location + vect(-500, -500, 400);
 
-	local L6Player p;
+	local L62Player p;
+	p = L62Player (Controller);
 
-	out_CamLoc = location;
-
-	p = L6Player (Controller);
+	// what is this location calling?
+	
 	if (p != None) {
-		out_CamLoc += p.offset;
+		out_CamLoc = p.Pawn.Location + p.offset;
+		if (p.L62CamLocked) {
+			out_CamRot = rotator(normal(p.Pawn.Location - out_CamLoc));
+		} else {
+			out_CamRot = p.L62CamRot;
+		}
 	}
 	
-
-
-	//out_CamRot = rot(-8192, 8192, 0);
-	out_CamRot = rotator(normal(location - out_CamLoc));
 	//Pitch, Yaw, Roll;
+	//out_CamRot = rot(-8192, 8192, 0);
+	
 	return true;
 }
 
