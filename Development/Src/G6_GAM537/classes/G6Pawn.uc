@@ -16,8 +16,8 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 	p = G6PlayerController (Controller);
 
 	if (p.Pawn != None) {
-		if (p.Pawn.GroundSpeed < 2000) {
-			p.Pawn.GroundSpeed += 100; //make the player's pawn faster
+		if (p.Pawn.GroundSpeed < 1500) {
+			p.Pawn.GroundSpeed += 70; //make the player's pawn faster
 		}
 		out_CamLoc = p.Pawn.Location + p.camOffset;
 		out_CamRot = rotator(normal(p.Pawn.Location - out_CamLoc));

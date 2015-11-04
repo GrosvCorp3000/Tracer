@@ -24,4 +24,9 @@ exec function IterateSelectable()
 
 DefaultProperties
 {
+	PlayerControllerClass = class'L7Player'
+	bUseClassicHUD = true
+	HUDType=class'L7HUD'
+	MapPrefixes[0] = "L7"
+	DefaultPawnClass = class'L7Pawn' 
 }
