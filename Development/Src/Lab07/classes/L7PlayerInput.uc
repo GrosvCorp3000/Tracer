@@ -1,4 +1,4 @@
-class L7PlayerInput extends Object;
+class L7PlayerInput extends UTPlayerInput;
 
 DefaultProperties
 {
