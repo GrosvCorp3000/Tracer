@@ -1,8 +1,9 @@
 class L7Pawn extends UTPawn  implements (L7Selectable);
 
-vector function GetLocation3D() {
-	return Controller.Pawn.Location;
-	//retrun location;
+var bool pawn_sel;
+
+function vector GetLocation3D() {
+	return Location;
 }
 
 DefaultProperties

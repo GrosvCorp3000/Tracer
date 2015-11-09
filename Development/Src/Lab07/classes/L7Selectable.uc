@@ -1,3 +1,3 @@
 interface L7Selectable;
 
-vector function GetLocation3D();
+function vector GetLocation3D();

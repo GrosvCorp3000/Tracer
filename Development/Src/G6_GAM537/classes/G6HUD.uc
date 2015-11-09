@@ -1,9 +1,8 @@
 class G6HUD extends HUD;
 
-var CanvasIcon HealthIcon;
-var CanvasIcon HealthBackgroundIcon;
-
-var Texture2D DefaultTexture;
+var float ColorBlink;
+var int intColorBlink;
+var int ColorBlinkPositive;
 var Font PlayerFont;
 var float PlayerNameScale;
 
@@ -13,9 +12,11 @@ var float PlayerNameScale;
  */
 function DrawHUD()
 {
+	local float HealthPercent;
 	local Vector2D TextSize;
 	local G6PlayerController p;
 	p = G6PlayerController (PlayerOwner);
+	HealthPercent = p.Pawn.Health / float(p.Pawn.HealthMax);
 
 	super.DrawHUD();
 
@@ -31,65 +32,71 @@ function DrawHUD()
 		Canvas.DrawText("Camera Offset Z:"$p.camOffset.Z);
 	}
 
-	//Draw Player health
-	Canvas.DrawIcon(HealthIcon, 8, 8, 0.5);
-	Canvas.Font = PlayerFont;
-	Canvas.SetDrawColorStruct(WhiteColor);
-	DrawIconStretched(HealthBackgroundIcon, 0, 0, 2.167, 0.875);
-	Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
-	Canvas.SetPos(96 - (TextSize.X * PlayerNameScale / RatioX),0);
-	Canvas.DrawText(PlayerOwner.Pawn.Health,,PlayerNameScale / RatioX,PlayerNameScale / RatioY);
+	if(p.Pawn.Health > 0){
+		//Health Bar Background
+		if(HealthPercent > 0.65){
+			Canvas.SetDrawColor(0,0,0);
+			ColorBlink = 0;
+		}else{
+			if(ColorBlink < 0){
+				ColorBlink = 0;
+			}else if(ColorBlink > 192){
+				ColorBlink = 192;
+			}
+			intColorBlink = Round(ColorBlink);
+			if(intColorBlink == 0){
+				ColorBlinkPositive = 1;
+			}else if(intColorBlink == 192){
+				ColorBlinkPositive = -1;
+			}
+			ColorBlink += ColorBlinkPositive * (2.1**((1-HealthPercent)*4)-1);
+			Canvas.SetDrawColor(intColorBlink,intColorBlink,intColorBlink);
+		}
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-200);
+		Canvas.DrawRect(p.Pawn.HealthMax*2,64);
+		//Health Bar
+		Canvas.SetDrawColor(255,0,0);
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-200);
+		Canvas.DrawRect(p.Pawn.Health*2,64);
+		//Health Bar Outline
+		Canvas.SetDrawColor(128,0,0);
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-200);
+		Canvas.DrawBox(p.Pawn.HealthMax*2,64);
+	
+		//Energy Bar Background
+		Canvas.SetDrawColor(0,0,0);
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-120);
+		Canvas.DrawRect(p.Pawn.HealthMax*2,64);
+		//Energy Bar
+		Canvas.SetDrawColor(128,128,0);
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-120);
+		Canvas.DrawRect(p.Pawn.Health*2,64);
+		//Energy Bar Outline
+		Canvas.SetDrawColor(192,192,0);
+		Canvas.SetPos(50 - (TextSize.X * PlayerNameScale / RatioX),SizeY-120);
+		Canvas.DrawBox(p.Pawn.HealthMax*2,64);
 
-	//Draw Player Name
-	Canvas.SetPos(0, SizeY - 64);
-	Canvas.DrawTileStretched(DefaultTexture,256, 64, 8, 72, 112, 48, ColorToLinearColor(GreenColor), true, true, 1.0);
-	Canvas.TextSize(UTPlayerController(PlayerOwner).PlayerReplicationInfo.PlayerName, TextSize.X, TextSize.Y);
-	Canvas.SetPos(128 - ((TextSize.X * PlayerNameScale / RatioX) / 2), SizeY - 28 - ((TextSize.Y * PlayerNameScale / RatioY) / 2));
-	Canvas.DrawText(UTPlayerController(PlayerOwner).PlayerReplicationInfo.PlayerName,,PlayerNameScale / RatioX,PlayerNameScale / RatioY);
-}
-
-/**
- * Draw a CanvasIcon stretched at the desired canvas position.
- */
-final function DrawIconStretched(CanvasIcon Icon, float X, float Y, optional float ScaleX, optional float ScaleY)
-{
-   if (Icon.Texture != None)
-   {
-      // verify properties are valid
-      if (ScaleX <= 0.f)
-      {
-         ScaleX = 1.f;
-      }
-
-      if (ScaleY <= 0.f)
-      {
-         ScaleY = 1.f;
-      }
-
-      if (Icon.UL == 0.f)
-      {
-         Icon.UL = Icon.Texture.GetSurfaceWidth();
-      }
-
-      if (Icon.VL == 0.f)
-      {
-         Icon.VL = Icon.Texture.GetSurfaceHeight();
-      }
-
-      // set the canvas position
-      Canvas.SetPos(X, Y);
-
-      // and draw the texture
-      Canvas.DrawTileStretched(Icon.Texture, Abs(Icon.UL) * ScaleX, Abs(Icon.VL) * ScaleY,
-                           Icon.U, Icon.V, Icon.UL, Icon.VL,, true, true);
-   }
+		//Draw Numbers
+		//Energy Number
+		Canvas.Font = PlayerFont;
+		Canvas.SetDrawColorStruct(WhiteColor);
+		Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
+		Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + p.Pawn.HealthMax,SizeY-108);
+		Canvas.DrawText(PlayerOwner.Pawn.Health,,PlayerNameScale / RatioX,PlayerNameScale / RatioY);
+		//Health Number
+		Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + p.Pawn.HealthMax,SizeY-188);
+		Canvas.DrawText(PlayerOwner.Pawn.Health,,PlayerNameScale / RatioX,PlayerNameScale / RatioY);
+	}else{
+		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
+		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
+	}
 }
 
 DefaultProperties
 {
-	DefaultTexture=Texture2D'UDNHUDContent.UDN_HUDGraphics'
 	PlayerFont="UI_Fonts.MultiFonts.MF_HudLarge"
 	PlayerNameScale=0.25
-	HealthIcon=(Texture=Texture2D'UDNHUDContent.UDN_HUDGraphics',U=72,V=8,UL=48,VL=48)
-	HealthBackgroundIcon=(Texture=Texture2D'UDNHUDContent.UDN_HUDGraphics',U=8,V=8,UL=48,VL=48)
+	ColorBlink = 0
+	intColorBlink = 0
+	ColorBlinkPositive = 1
 }
