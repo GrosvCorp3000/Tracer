@@ -42,19 +42,6 @@ function DrawHUD()
 		Canvas.DrawText("Player Speed: "$p.Pawn.GroundSpeed);
 	}
 
-	//Draw the skill tree
-	if (p.bSkill) {
-		Canvas.SetPos(SizeX * 0.6, SizeY * 0.1);
-		Canvas.SetDrawColor(0, 0, 0, 150);
-		Canvas.DrawRect(SizeX * 0.3, SizeY * 0.7);
-
-		Canvas.SetPos(SizeX * 0.6, SizeY * 0.1);
-		Canvas.SetDrawColor(0, 255, 0);
-		Canvas.DrawBox(SizeX * 0.3, SizeY * 0.7);
-
-		
-	}
-
 	//Determine the location via a very slow and manual way
 	PawnLocation = p.Pawn.Location;
 	if (PawnLocation.X > -5335 && PawnLocation.X < -3360 && PawnLocation.Y > -3550 && PawnLocation.Y < -2595) {
@@ -181,6 +168,62 @@ function DrawHUD()
 	}else{
 		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
 		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
+	}
+
+	//Draw the skill tree
+	if (p.bSkill) {
+		Canvas.Font = Canvas.GetDefaultCanvasFont();
+		
+		Canvas.SetPos(SizeX * 0.5, SizeY * 0.1);
+		Canvas.SetDrawColor(0, 0, 0, 200);
+		Canvas.DrawRect(SizeX * 0.38, SizeY * 0.7);
+
+		Canvas.SetPos(SizeX * 0.5, SizeY * 0.1);
+		Canvas.SetDrawColor(0, 255, 0);
+		Canvas.DrawBox(SizeX * 0.38, SizeY * 0.7);
+
+		Canvas.SetPos(SizeX * 0.52, SizeY * 0.15);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.55, SizeY * 0.17);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Health");
+
+		Canvas.SetPos(SizeX * 0.64, SizeY * 0.15);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.67, SizeY * 0.17);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Energy");
+
+		Canvas.SetPos(SizeX * 0.76, SizeY * 0.15);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.79, SizeY * 0.17);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Speed");
+
+		Canvas.SetPos(SizeX * 0.52, SizeY * 0.25);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.55, SizeY * 0.27);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Health 2");
+
+		Canvas.SetPos(SizeX * 0.64, SizeY * 0.25);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.67, SizeY * 0.27);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Energy 2");
+
+		Canvas.SetPos(SizeX * 0.76, SizeY * 0.25);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.79, SizeY * 0.27);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Speed 2");
+
 	}
 }
 

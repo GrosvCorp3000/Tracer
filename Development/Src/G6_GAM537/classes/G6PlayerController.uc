@@ -1,13 +1,35 @@
 class G6PlayerController extends UTPlayerController;
 
+//UI Toggles
 var bool debug;
 var int unitHE;
 var bool bWUI;
-var vector camOffset;
-var int Energy;
-var int EnergyMax;
 var bool bBattleMode;
 var bool bSkill;
+
+//Character attributes
+var int Energy;
+var int EnergyMax;
+
+//Skill tree components
+var bool bsHealth;
+var bool bsHealth2;
+var bool bsEndure;
+var bool bsEnergy;
+var bool bsEnergy2;
+var bool bsRecharge;
+var bool bsSpeed;
+var bool bsSpeed2;
+var bool bsSlow;
+var bool bsLaser;
+var bool bsLaserUp;
+var bool bsShotgun;
+var bool bsShotgunUp;
+var bool bsRocket;
+var bool bsRocketUp;
+
+var vector camOffset;
+
 
 exec function ToggleSkillTree()
 {
