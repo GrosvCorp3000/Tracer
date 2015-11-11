@@ -1,12 +1,46 @@
 class G6PlayerController extends UTPlayerController;
 
 var bool debug;
+var int unitHE;
+var bool bWUI;
 var vector camOffset;
+var int Energy;
+var int EnergyMax;
+var bool bBattleMode;
+var bool bSkill;
+
+exec function ToggleSkillTree()
+{
+	if (Pawn != none && !bBattleMode) {
+		bSkill = !bSkill;
+	}
+}
+
+exec function AddSpeed()
+{
+	if (Pawn.GroundSpeed < 1200) {
+		Pawn.GroundSpeed += 200;
+	}
+}
+
+exec function ToggleWUI() 
+{
+	if (Pawn != none) {
+		bWUI = !bWUI;
+	}
+}
 
 exec function ToggleDebug() 
 {
 	if (Pawn != none) {
 		debug = !debug;
+	}
+}
+
+exec function ToggleUnitHE() 
+{
+	if (Pawn != none) {
+		unitHE = (unitHE + 1) % 3;
 	}
 }
 
@@ -106,7 +140,10 @@ ignores SeePlayer, HearNoise, Bump;
 
 DefaultProperties
 {
-	debug = true;
+	bSkill = false
+	bBattleMode = false
+	debug = true
+	unitHE = 0
 	bBehindView = true
 	camOffset = (X=-300, Y=300, z=500)
 }

@@ -19,6 +19,7 @@ function Vector2D DrawCenteredTextureOnCanvas(Texture2D tex, float screenScale)
 
 	//Canvas.DrawTexture(tex, screenScale * tex.SizeX / SizeX);
 	Canvas.DrawTexture(tex, screenScale);
+	
 
 	Canvas.SetPos(temp.X, temp.Y);
 
