@@ -17,9 +17,11 @@ function DrawHUD()
 	local vector playerProject;
 	local Vector2D TextSize;
 	local G6PlayerController p;
+	local G6PlayerInput p_input;
 	local float HealthPercent;
 
 	p = G6PlayerController (PlayerOwner);
+	p_input = G6PlayerInput (p.PlayerInput);
 	HealthPercent = p.Pawn.Health / float(p.Pawn.HealthMax);
 
 	super.DrawHUD();
@@ -64,7 +66,7 @@ function DrawHUD()
 		MapLocationName = "Maze";
 	} else if (PawnLocation.X > -4570 && PawnLocation.X < -1588 && PawnLocation.Y > 1717 && PawnLocation.Y < 3659) {
 		MapLocationName = "Dais";
-	} else if (PawnLocation.X > -475 && PawnLocation.X < 2522 && PawnLocation.Y > 1573 && PawnLocation.Y < 3547) {
+	} else if (PawnLocation.X > -475 && PawnLocation.X < 2523 && PawnLocation.Y > 1573 && PawnLocation.Y < 3547){
 		MapLocationName = "Two Bridges";
 	} else if (PawnLocation.X > 3235 && PawnLocation.X < 5979 && PawnLocation.Y > 2723 && PawnLocation.Y < 3675) {
 		MapLocationName = "Crash Site";
@@ -72,7 +74,7 @@ function DrawHUD()
 		MapLocationName = "Final";
 	} else if (PawnLocation.X > -2780 && PawnLocation.X < -292 && PawnLocation.Y > -3655 && PawnLocation.Y < -675) {
 		MapLocationName = "Mist";
-	} else if (PawnLocation.X > 162 && PawnLocation.X < 3163 && PawnLocation.Y > -3675 && PawnLocation.Y < 932) {
+	} else if (PawnLocation.X > 162 && PawnLocation.X < 3163 && PawnLocation.Y > -3675 && PawnLocation.Y < -932) {
 		MapLocationName = "Pond";
 	} else if (PawnLocation.X > 3620 && PawnLocation.X < 6107 && PawnLocation.Y > -3675 && PawnLocation.Y < -2212) {
 		MapLocationName = "Alien";
@@ -83,7 +85,6 @@ function DrawHUD()
 	//Display the location on HUD
 	Canvas.Font = PlayerFont;
 	Canvas.SetDrawColorStruct(WhiteColor);
-	//Canvas.TextSize(MapLocationName, TextSize.X, TextSize.Y);
 	Canvas.SetPos(SizeX*0.015, SizeY*0.015);
 	Canvas.DrawText(MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
 
@@ -165,11 +166,23 @@ function DrawHUD()
 			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + p.Pawn.HealthMax,SizeY-188);
 			Canvas.DrawText(PlayerOwner.Pawn.Health,,PlayerNameScale / RatioX,PlayerNameScale / RatioY);
 		}
+		
+		
 	}else{
 		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
 		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
 	}
 
+	//Draw the level and skill points display
+	Canvas.Font = PlayerFont;
+	Canvas.SetDrawColorStruct(WhiteColor);
+	Canvas.SetPos(SizeX*0.8, SizeY*0.85);
+	if (p.bSkill) {
+		Canvas.DrawText("Skill Pts: "$p.cSkPts,,PlayerNameScale / RatioX,PlayerNameScale * 1.1 / RatioY);		
+	} else {
+		Canvas.DrawText("Level: "$p.cLevel,,PlayerNameScale / RatioX,PlayerNameScale * 1.1 / RatioY);
+	}
+	
 	//Draw the skill tree
 	if (p.bSkill) {
 		Canvas.Font = Canvas.GetDefaultCanvasFont();
@@ -224,6 +237,72 @@ function DrawHUD()
 		Canvas.SetDrawColor(0, 0, 0);
 		Canvas.DrawText("Speed 2");
 
+		Canvas.SetPos(SizeX * 0.52, SizeY * 0.35);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.55, SizeY * 0.37);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Endure");
+
+		Canvas.SetPos(SizeX * 0.64, SizeY * 0.35);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.67, SizeY * 0.37);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Recharge");
+
+		Canvas.SetPos(SizeX * 0.76, SizeY * 0.35);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.79, SizeY * 0.37);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Slow");
+
+		Canvas.SetPos(SizeX * 0.52, SizeY * 0.55);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.55, SizeY * 0.57);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Laser");
+
+		Canvas.SetPos(SizeX * 0.64, SizeY * 0.55);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.67, SizeY * 0.57);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Shotgun");
+
+		Canvas.SetPos(SizeX * 0.76, SizeY * 0.55);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.79, SizeY * 0.57);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Rocket");
+
+		Canvas.SetPos(SizeX * 0.52, SizeY * 0.65);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.55, SizeY * 0.67);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Laser+");
+
+		Canvas.SetPos(SizeX * 0.64, SizeY * 0.65);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.67, SizeY * 0.67);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Shotgun+");
+
+		Canvas.SetPos(SizeX * 0.76, SizeY * 0.65);
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+		Canvas.SetPos(SizeX * 0.79, SizeY * 0.67);
+		Canvas.SetDrawColor(0, 0, 0);
+		Canvas.DrawText("Rocket+");
+
+		//Now draw the cursor on screen
+		Canvas.SetPos(p_input.MousePosition.X, p_input.MousePosition.Y);
+		Canvas.DrawTexture(Texture2D'L7Content.ReticlePicking', 0.1);
 	}
 }
 

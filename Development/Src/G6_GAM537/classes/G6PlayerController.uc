@@ -8,8 +8,11 @@ var bool bBattleMode;
 var bool bSkill;
 
 //Character attributes
-var int Energy;
-var int EnergyMax;
+var int cEnergy;
+var int cEnergyMax;
+var int cExp;
+var int cLevel;
+var int cSkPts;
 
 //Skill tree components
 var bool bsHealth;
@@ -30,10 +33,32 @@ var bool bsRocketUp;
 
 var vector camOffset;
 
+function UpdateRotation( float DeltaTime )
+{
+	local G6PlayerInput p_input;
+	p_input = G6PlayerInput (PlayerInput);
+
+	if(!p_input.bControllingCursor) {
+		super.UpdateRotation(DeltaTime);
+	}
+}
+
+exec function StartFire( optional byte FireModeNum )
+{
+	local G6PlayerInput p_input;
+	p_input = G6PlayerInput (PlayerInput);
+
+	if(!p_input.bControllingCursor) {
+		super.StartFire(FireModeNum);
+	}
+}
 
 exec function ToggleSkillTree()
 {
+	local G6PlayerInput p_input;
+	p_input = G6PlayerInput (PlayerInput);
 	if (Pawn != none && !bBattleMode) {
+		p_input.bControllingCursor = !p_input.bControllingCursor;
 		bSkill = !bSkill;
 	}
 }
@@ -162,10 +187,30 @@ ignores SeePlayer, HearNoise, Bump;
 
 DefaultProperties
 {
+	cLevel = 1
+	cSkPts = 10
+	bsHealth = false
+	bsHealth2 = false
+	bsEndure = false
+	bsEnergy = false
+	bsEnergy2 = false
+	bsRecharge = false
+	bsSpeed = false
+	bsSpeed2 = false
+	bsSlow = false
+	bsLaser = false
+	bsLaserUp = false
+	bsShotgun = false
+	bsShotgunUp = false
+	bsRocket = false
+	bsRocketUp = false
+	cEnergy = 100
+	cEnergyMax = 100
 	bSkill = false
 	bBattleMode = false
-	debug = true
+	debug = false
 	unitHE = 0
 	bBehindView = true
 	camOffset = (X=-300, Y=300, z=500)
+	InputClass = class'G6PlayerInput'
 }

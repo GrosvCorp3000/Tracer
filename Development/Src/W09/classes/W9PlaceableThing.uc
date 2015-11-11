@@ -5,7 +5,15 @@ class W9PlaceableThing extends Actor
 
 function Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Vector HitNormal)
 {
+	local Pawn p;
 	`Log("Touch Start "$Other);
+	p = Pawn(Other);
+	if (p != None){
+		if (p.InvManager.FindInventoryType(class'W9Weapon') == None)
+		{
+			p.InvManager.CreateInventory(class'W9Weapon');
+		}
+	}
 }
 
 function Untouch(Actor Other)
@@ -29,5 +37,5 @@ DefaultProperties
 	Components.Add(MySM)
 
 	bCollideActors = true
-	bBlockActors = true
+	bBlockActors = false
 }
