@@ -31,5 +31,5 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 
 DefaultProperties
 {
-	GroundSpeed = 800
+	GroundSpeed = 1200
 }

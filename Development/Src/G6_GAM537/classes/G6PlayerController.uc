@@ -63,13 +63,6 @@ exec function ToggleSkillTree()
 	}
 }
 
-exec function AddSpeed()
-{
-	if (Pawn.GroundSpeed < 1200) {
-		Pawn.GroundSpeed += 200;
-	}
-}
-
 exec function ToggleWUI() 
 {
 	if (Pawn != none) {
