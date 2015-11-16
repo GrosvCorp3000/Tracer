@@ -35,7 +35,6 @@ var string skillNames[15];
 
 var vector camOffset;
 
-
 function UpdateRotation( float DeltaTime )
 {
 	local Rotator DeltaRot, newRotation, ViewRotation;

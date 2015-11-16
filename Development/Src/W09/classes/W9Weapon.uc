@@ -24,6 +24,7 @@ DefaultProperties
 	Begin Object Class=SkeletalMeshComponent Name=FPDisplayMesh
 		SkeletalMesh=SkeletalMesh'WP_RocketLauncher.Mesh.SK_WP_RocketLauncher_1P'
 		AnimSets[0]=AnimSet'WP_RocketLauncher.Anims.K_WP_RocketLauncher_1P_Base'
+		Animations=FPDMAnimNode
 	End Object
 	Mesh=FPDisplayMesh
 }

@@ -12,6 +12,7 @@ function Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Ve
 		if (p.InvManager.FindInventoryType(class'W9Weapon') == None)
 		{
 			p.InvManager.CreateInventory(class'W9Weapon');
+			//p.InvManager.AddInventory
 		}
 	}
 }
