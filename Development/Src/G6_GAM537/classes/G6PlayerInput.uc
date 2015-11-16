@@ -19,9 +19,9 @@ event PlayerInput( float DeltaTime )
 		if (myHUD != None) 
 		{
 			// Add the aMouseX to the mouse position and clamp it within the viewport width
-			MousePosition.X = Clamp(MousePosition.X + aMouseX * 0.1, 0, myHUD.SizeX - 20); 
+			MousePosition.X = Clamp(MousePosition.X + aMouseX * 0.1, 0, myHUD.SizeX);
 			// Add the aMouseY to the mouse position and clamp it within the viewport height
-			MousePosition.Y = Clamp(MousePosition.Y - aMouseY * 0.1, 0, myHUD.SizeY - 20); 
+			MousePosition.Y = Clamp(MousePosition.Y - aMouseY * 0.1, 0, myHUD.SizeY);   
 		}
 	}
 }
