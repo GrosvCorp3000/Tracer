@@ -51,17 +51,11 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	PC = PlayerController(C);
 	if (PC != None)
 	{
-		`log("Possessed called, inventory manager is "$InvManager);
-		//InvManager.CreateInventory(class'UTWeap_ShockRifle');
-		//InvManager.CreateInventory(class'UTWeap_RocketLauncher_Content');
-		`log("Created: "$InvManager.CreateInventory(class'W9Weapon'));
+		InvManager.CreateInventory(class'UTWeap_ShockRifle');
+		InvManager.CreateInventory(class'UTWeap_RocketLauncher_Content');
+		//`log("Created: "$InvManager.CreateInventory(class'W9Weapon'));
 		InvManager.SwitchToBestWeapon();
 	}
-}
-
-exec function GiveW9Weapon()
-{
-	InvManager.CreateInventory(class'W9Weapon');
 }
 
 DefaultProperties

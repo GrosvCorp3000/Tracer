@@ -35,6 +35,12 @@ var string skillNames[15];
 
 var vector camOffset;
 
+//This fixes weapons' projetiles to pawn's rotation, not the camera
+function Rotator GetAdjustedAimFor( Weapon W, vector StartFireLoc )
+{
+	return Rotation;
+}
+
 function UpdateRotation( float DeltaTime )
 {
 	local Rotator DeltaRot, newRotation, ViewRotation;
