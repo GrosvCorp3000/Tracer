@@ -53,8 +53,13 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	{
 		InvManager.CreateInventory(class'UTWeap_ShockRifle');
 		InvManager.CreateInventory(class'UTWeap_RocketLauncher_Content');
+		//InvManager.CreateInventory(class'G6Weap_Pistol');
 		//`log("Created: "$InvManager.CreateInventory(class'W9Weapon'));
 		InvManager.SwitchToBestWeapon();
+		//G6Weap_Shotgun
+		//G6Weap_Pistol
+		//G6Weap_Rocket
+		//G6Weap_Laser
 	}
 }
 

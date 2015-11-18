@@ -92,6 +92,7 @@
     <Folder Include="Lab06" />
     <Folder Include="G6_GAM537" />
     <Folder Include="Lab07" />
+    <Folder Include="W10" />
     <Folder Include="W09" />
     <Folder Include="OnlineSubsystemGameCenter\" />
     <Folder Include="OnlineSubsystemGameCenter\Classes\" />
@@ -118,6 +119,7 @@
     <Folder Include="UTGame\" />
     <Folder Include="UTGame\Classes\" />
     <Folder Include="W09\classes" />
+    <Folder Include="W10\classes" />
     <Folder Include="WinDrv\" />
     <Folder Include="WinDrv\Classes\" />
   </ItemGroup>

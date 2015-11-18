@@ -1,6 +1,6 @@
 class W9Projectile extends UTProjectile;
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
 	`Log("created projective"$self);
 }
