@@ -49,9 +49,6 @@ function DrawHUD()
 
 		Canvas.DrawText("Player Speed: "$p.Pawn.GroundSpeed);
 
-		Canvas.DrawText("skills: "$p.skills[0]);
-		Canvas.DrawText("skills: "$p.skills[1]);
-
 		Canvas.DrawText("Battle Mode: "$p.bBattleMode);
 		Canvas.DrawText("Weapon: "$p.Pawn.Weapon.Name);
 	}
@@ -129,11 +126,7 @@ function DrawHUD()
 				Canvas.SetDrawColor(0,0,0);
 				ColorBlink = 0;
 			}else{
-				if(ColorBlink < 0){
-					ColorBlink = 0;
-				}else if(ColorBlink > 192){
-					ColorBlink = 192;
-				}
+				FClamp(ColorBlink, 0, 192);
 				intColorBlink = Round(ColorBlink);
 				if(intColorBlink == 0){
 					ColorBlinkPositive = 1;
@@ -172,10 +165,10 @@ function DrawHUD()
 			Canvas.SetDrawColorStruct(WhiteColor);
 			Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
 			//Health Number
-			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100,SizeY-95);
-			Canvas.DrawText(PlayerOwner.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
+			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-95);
+			Canvas.DrawText(p.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 			//Energy Number
-			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100,SizeY-43);
+			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-43);
 			Canvas.DrawText(PlayerOwner.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 		}
 		
@@ -240,81 +233,81 @@ function DrawHUD()
 				Canvas.SetPos(SizeX * (0.52+drawSkillTree1*0.12), SizeY * (0.15+drawSkillTree3*0.1));
 				if(p_input.MousePosition.X > SizeX * (0.52+drawSkillTree1*0.12) && p_input.MousePosition.X < SizeX * (0.62+drawSkillTree1*0.12) && p_input.MousePosition.Y > SizeY * (0.15+drawSkillTree3*0.1) && p_input.MousePosition.Y < SizeY * (0.22+drawSkillTree3*0.1)){
 					Canvas.SetDrawColor(200, 200, 225);
-					if(p_input.bAttemptSelect){
+					if(p_input.bAttemptSelect && p.skills[drawSkillTree1*5+drawSkillTree2] == 0 && p.cSkPts >= p.skillRequirement[drawSkillTree1*5+drawSkillTree2]){
 						//Health Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 0 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 0){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Health2 Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 1 && p.skills[0] == 1 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 1 && p.skills[0] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Endure Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 2 && p.skills[1] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 2 && p.skills[1] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Laser Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 3 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 3){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Laser Upgrade Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 4 && p.skills[3] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 4 && p.skills[3] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Energy Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 5 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 5){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Energy2 Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 6 && p.skills[5] == 1 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 6 && p.skills[5] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Recharge Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 7 && p.skills[6] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 7 && p.skills[6] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Shotgun Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 8 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 8){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Shotgun Upgrade Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 9 && p.skills[8] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 9 && p.skills[8] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Speed Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 10 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 10){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Speed2 Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 11 && p.skills[10] == 1 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 11 && p.skills[10] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Slow Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 12 && p.skills[11] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 12 && p.skills[11] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Rocket Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 13 && p.cSkPts >= 1){
+						if(drawSkillTree1*5+drawSkillTree2 == 13){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 1;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						//Rocket Upgrade Requirement
-						if(drawSkillTree1*5+drawSkillTree2 == 14 && p.skills[13] == 1 && p.cSkPts >= 2){
+						if(drawSkillTree1*5+drawSkillTree2 == 14 && p.skills[13] == 1){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
-							p.cSkPts -= 2;
+							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
 						}
 						p_input.bAttemptSelect = false;
 					}
@@ -325,10 +318,27 @@ function DrawHUD()
 					Canvas.SetDrawColor(230, 230, 75);
 				}
 				Canvas.DrawRect(SizeX * 0.1, SizeY * 0.07);
+				if(drawSkillTree1*5+drawSkillTree2 != 2 && drawSkillTree1*5+drawSkillTree2 != 4 && drawSkillTree1*5+drawSkillTree2 != 7 && drawSkillTree1*5+drawSkillTree2 != 9 && drawSkillTree1*5+drawSkillTree2 != 12 && drawSkillTree1*5+drawSkillTree2 != 14){
+					if(p.skills[drawSkillTree1*5+drawSkillTree2] == 1){
+						Canvas.SetDrawColor(230, 230, 75);
+					}else{
+						Canvas.SetDrawColor(255, 255, 255);
+					}
+					Canvas.SetPos(SizeX * (0.5695+drawSkillTree1*0.12), SizeY * (0.22+drawSkillTree3*0.1));
+					Canvas.DrawBox(SizeX * 0.001, SizeY * 0.03);
+				}
 				//Skill Text
 				Canvas.SetPos(SizeX * (0.55+drawSkillTree1*0.12), SizeY * (0.17+(drawSkillTree3)*0.1));
 				Canvas.SetDrawColor(0, 0, 0);
 				Canvas.DrawText(""$p.skillNames[drawSkillTree1*5+drawSkillTree2]);
+				Canvas.SetPos(SizeX * (0.525+drawSkillTree1*0.12), SizeY * (0.19+(drawSkillTree3)*0.1));
+				Canvas.DrawText(""$p.skillRequirement[drawSkillTree1*5+drawSkillTree2]);
+
+				if(drawSkillTree1*5+drawSkillTree2 != 0 && drawSkillTree1*5+drawSkillTree2 != 3 && drawSkillTree1*5+drawSkillTree2 != 5 && drawSkillTree1*5+drawSkillTree2 != 8 && drawSkillTree1*5+drawSkillTree2 != 10 && drawSkillTree1*5+drawSkillTree2 != 13){
+					Canvas.SetDrawColor(255, 255, 255);
+					Canvas.SetPos(SizeX * (0.57+drawSkillTree1*0.12), SizeY * (0.120+drawSkillTree3*0.1));
+					Canvas.DrawRect(SizeX * 0.001, SizeY * 0.03);
+				}
 			}
 		}
 

@@ -32,6 +32,7 @@ var int cSkPts;
  * skills[14] - Rocket Upgrade */
 var int skills[15];
 var string skillNames[15];
+var int skillRequirement[15];
 
 var vector camOffset;
 
@@ -97,6 +98,9 @@ exec function ToggleBattle()
 {
 	if (Pawn != none) {
 		 bBattleMode = !bBattleMode;
+		 if(bSkill){
+			ToggleSkillTree();
+		 }
 	}
 }
 
@@ -249,6 +253,21 @@ DefaultProperties
 	skillNames[12] = "  Slow"
 	skillNames[13] = "Rocket"
 	skillNames[14] = "Rocket+"
+	skillRequirement[0] = 1
+	skillRequirement[1] = 1
+	skillRequirement[2] = 2
+	skillRequirement[3] = 1
+	skillRequirement[4] = 2
+	skillRequirement[5] = 1
+	skillRequirement[6] = 1
+	skillRequirement[7] = 2
+	skillRequirement[8] = 1
+	skillRequirement[9] = 2
+	skillRequirement[10] = 1
+	skillRequirement[11] = 1
+	skillRequirement[12] = 2
+	skillRequirement[13] = 1
+	skillRequirement[14] = 2
 	cEnergy = 100
 	cEnergyMax = 100
 	bSkill = false
