@@ -14,6 +14,9 @@ var int cExp;
 var int cLevel;
 var int cSkPts;
 
+var int currentWeapon;
+var UTWeapon curWeapon;
+
 //Skill tree components
 /* skills[0] - Health
  * skills[1] - Health2
@@ -73,13 +76,66 @@ function UpdateRotation( float DeltaTime )
 	
 }
 
+exec function PrevWeapon() {
+}
+
+exec function NextWeapon() {
+}
+
 exec function StartFire( optional byte FireModeNum )
 {
 	local G6PlayerInput p_input;
 	p_input = G6PlayerInput (PlayerInput);
 
 	if(!p_input.bControllingCursor) {
-		super.StartFire(FireModeNum);
+		if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Laser')){
+			super.StartFire( 1 );
+		}else{
+			super.StartFire(FireModeNum);
+		}
+	}
+}
+
+exec function StopFire( optional byte FireModeNum )
+{
+	if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Laser')){
+		super.StopFire( 1 );
+	}else{
+		super.StopFire(FireModeNum);
+	}
+}
+
+// The player wants to alternate-fire.
+exec function StartAltFire( optional Byte FireModeNum )
+{
+	local G6PlayerInput p_input;
+	p_input = G6PlayerInput (PlayerInput);
+
+	if(!p_input.bControllingCursor) {
+		if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Pistol')){
+			super.StartFire( 0 );
+		}else{
+			super.StartFire( 1 );
+		}
+	}
+}
+
+exec function StopAltFire( optional byte FireModeNum )
+{
+	if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Pistol')){
+		super.StopFire( 0 );
+	}else{
+		super.StopFire( 1 );
+	}
+}
+
+exec function SwitchWeapon(byte T)
+{
+	if(!bSkill) {
+		currentWeapon = T;
+		super.SwitchWeapon(T);
+		curWeapon = UTWeapon (Pawn.Weapon);
+		curWeapon.MaxAmmoCount = cEnergyMax;
 	}
 }
 
@@ -127,32 +183,38 @@ exec function ToggleUnitHE()
 
 exec function IncCamOffsetX()
 {
-	camOffset.X += 100;
+	if (debug)
+		camOffset.X += 100;
 }
 
 exec function DecCamOffsetX()
 {
-	camOffset.X -= 100;
+	if (debug)
+		camOffset.X -= 100;
 }
 
 exec function IncCamOffsetY()
 {
-	camOffset.Y += 100;
+	if (debug)
+		camOffset.Y += 100;
 }
 
 exec function DecCamOffsetY()
 {
-	camOffset.Y -= 100;
+	if (debug)
+		camOffset.Y -= 100;
 }
 
 exec function IncCamOffsetZ()
 {
-	camOffset.Z += 100;
+	if (debug)
+		camOffset.Z += 100;
 }
 
 exec function DecCamOffsetZ()
 {
-	camOffset.Z -= 100;
+	if (debug)
+		camOffset.Z -= 100;
 }
 
 // Player movement.
@@ -275,6 +337,7 @@ DefaultProperties
 	debug = false
 	unitHE = 0
 	bBehindView = true
+	currentWeapon = 1
 	camOffset = (X=-400, Y=300, z=500)
 	InputClass = class'G6PlayerInput'
 }

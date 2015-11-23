@@ -9,13 +9,13 @@ simulated function PostBeginPlay()
 DefaultProperties
 {
 	Begin Object Class=StaticMeshComponent Name=ProjDisplay
-		StaticMesh=StaticMesh'WP_BioRifle.Mesh.S_Bio_Blob_01'
+		StaticMesh=StaticMesh'LT_Light.SM.Mesh.S_LT_Light_SM_Light01'
 	End Object
 	Components.Add(ProjDisplay)
 
 	LifeSpan=10
-	MaxSpeed=300
-	Speed=150
+	MaxSpeed=1000
+	Speed=300
 	AccelRate=100
 	Damage=5
 	DamageRadius=50

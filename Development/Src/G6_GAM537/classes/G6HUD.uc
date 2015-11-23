@@ -19,16 +19,19 @@ function DrawHUD()
 	local G6PlayerController p;
 	local G6PlayerInput p_input;
 	local float HealthPercent;
+	local float EnergyPercent;
 	local int drawSkillTree1;
 	local int drawSkillTree2;
 	local int drawSkillTree3;
 	local bool insideSkillBox;
 	local Texture2D weaponTex;
 	local float weaponUIscale;
+	local UTWeapon cur_weap;
 
 	p = G6PlayerController (PlayerOwner);
 	p_input = G6PlayerInput (p.PlayerInput);
 	HealthPercent = p.Pawn.Health / float(p.Pawn.HealthMax);
+	EnergyPercent = p.cEnergy / float(p.cEnergyMax);
 
 	super.DrawHUD();
 
@@ -50,7 +53,11 @@ function DrawHUD()
 		Canvas.DrawText("Player Speed: "$p.Pawn.GroundSpeed);
 
 		Canvas.DrawText("Battle Mode: "$p.bBattleMode);
-		Canvas.DrawText("Weapon: "$p.Pawn.Weapon.Name);
+
+		cur_weap = UTWeapon (p.pawn.Weapon);
+		Canvas.DrawText("Weapon: "$cur_weap.Name);
+		Canvas.DrawText("Weapon Ammo: "$cur_weap.GetAmmoCount());
+		Canvas.DrawText("Weapon Max Ammo: "$cur_weap.MaxAmmoCount);
 	}
 
 	//Determine the location via a very slow and manual way
@@ -113,7 +120,7 @@ function DrawHUD()
 			//Unit Energy meter
 			Canvas.SetDrawColor(128,128,0);
 			Canvas.SetPos(playerProject.X-45, playerProject.Y+50+10);
-			Canvas.DrawRect(HealthPercent*80,8);
+			Canvas.DrawRect(EnergyPercent*80,8);
 			//Unit Energy meter outline
 			Canvas.SetDrawColor(128,0,0);
 			Canvas.SetPos(playerProject.X-45, playerProject.Y+50+10);
@@ -154,7 +161,7 @@ function DrawHUD()
 			//Energy Bar
 			Canvas.SetDrawColor(128,128,0);
 			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
-			Canvas.DrawRect(HealthPercent*200,32);
+			Canvas.DrawRect(EnergyPercent*200,32);
 			//Energy Bar Outline
 			Canvas.SetDrawColor(192,192,0);
 			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
@@ -169,7 +176,7 @@ function DrawHUD()
 			Canvas.DrawText(p.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 			//Energy Number
 			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-43);
-			Canvas.DrawText(PlayerOwner.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
+			Canvas.DrawText(p.cEnergy,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 		}
 		
 		
@@ -353,9 +360,11 @@ function DrawHUD()
 	Canvas.SetDrawColor(255,255,255);
 	weaponUIscale = 0.9;
 	//First weapon
-	weaponTex = Texture2D'UDKHUD.ut3_weapon6_color';
+	weaponTex = Texture2D'UDKHUD.ut3_weapon4_color';
 	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	if(p.currentWeapon == 1){
+		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	}
 	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
 	Canvas.Font = PlayerFont;
 	Canvas.DrawText("1",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
@@ -363,25 +372,31 @@ function DrawHUD()
 	Canvas.DrawTexture(weaponTex, weaponUIscale);
 	//Second weapon
 	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	//Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	if(p.currentWeapon == 2){
+		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	}
 	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
 	Canvas.DrawText("2",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
 	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon9_color', weaponUIscale);
+	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon10_color', weaponUIscale);
 	//Third weapon
 	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	//Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	if(p.currentWeapon == 3){
+		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	}
 	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
 	Canvas.DrawText("3",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
 	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon8_color', weaponUIscale);
+	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon6_color', weaponUIscale);
 	//Fourth weapon
 	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	//Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	if(p.currentWeapon == 4){
+		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	}
 	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
 	Canvas.DrawText("4",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
 	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon7_color', weaponUIscale);
+	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon8_color', weaponUIscale);
 
 	//HealthIcon=(Texture=Texture2D'UDNHUDContent.UDN_HUDGraphics',U=72,V=8,UL=48,VL=48)
 		//Texture2D'UDKHUD.udk_inventory_I1'

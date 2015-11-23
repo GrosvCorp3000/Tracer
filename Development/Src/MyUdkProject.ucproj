@@ -78,6 +78,7 @@
     <Folder Include="GFxUI\Classes\" />
     <Folder Include="IpDrv\" />
     <Folder Include="IpDrv\Classes\" />
+    <Folder Include="L08\classes" />
     <Folder Include="Lab06\classes" />
     <Folder Include="Lab06_2\" />
     <Folder Include="Lab06_2\classes\" />
@@ -92,6 +93,7 @@
     <Folder Include="Lab06" />
     <Folder Include="G6_GAM537" />
     <Folder Include="Lab07" />
+    <Folder Include="L08" />
     <Folder Include="W10" />
     <Folder Include="W09" />
     <Folder Include="OnlineSubsystemGameCenter\" />
