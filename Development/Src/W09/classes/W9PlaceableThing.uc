@@ -2,32 +2,38 @@ class W9PlaceableThing extends Actor
 	placeable
 	ClassGroup(Week9);
 
-
-function Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Vector HitNormal)
+function Touch(Actor Other, PrimitiveComponent OtherComp,
+	Vector HitLocation, Vector HitNormal)
 {
-	local Pawn p;
-	`Log("Touch Start "$Other);
-	p = Pawn(Other);
-	if (p != None){
-		if (p.InvManager.FindInventoryType(class'W9Weapon') == None)
+	local Pawn P;
+	
+	`Log("Touch START "$Other);	
+	P = Pawn(Other);
+	if (P != None)
+	{
+		if (P.InvManager.FindInventoryType(
+			class'W9Weapon') == None)
 		{
-			p.InvManager.CreateInventory(class'W9Weapon');
-			//p.InvManager.AddInventory
+			P.InvManager.CreateInventory(class'W9Weapon');
 		}
 	}
 }
 
+function PostTouch(Actor Other)
+{
+	`Log("post touch... "$Other);
+}
+
 function Untouch(Actor Other)
 {
-	`Log("Torch End "$Other);
+	`Log("Touch END "$Other);
 }
 
-function Bump(Actor Other, PrimitiveComponent OtherComp, Vector HitNormal)
+function Bump(Actor Other, PrimitiveComponent OtherComp,
+	Vector HitNormal)
 {
-	`Log("Bump"$Other);
+	`Log("BUMP "$other);
 }
-
-
 
 DefaultProperties
 {
@@ -36,7 +42,5 @@ DefaultProperties
 		Translation=(Z=-96)
 	End Object
 	Components.Add(MySM)
-
-	bCollideActors = true
-	bBlockActors = false
+	bCollideActors = True
 }

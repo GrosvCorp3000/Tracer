@@ -2,9 +2,9 @@ class W9Projectile extends UTProjectile;
 
 simulated function PostBeginPlay()
 {
-	`Log("created projective"$self);
+	super.PostBeginPlay();
+	`Log("W9Projectile instantiated -> "$self);
 }
-
 
 DefaultProperties
 {
@@ -14,10 +14,10 @@ DefaultProperties
 	Components.Add(ProjDisplay)
 
 	LifeSpan=10
-	MaxSpeed=1000
-	Speed=300
+	MaxSpeed=300
+	Speed=150
 	AccelRate=100
-	Damage=5
+	Damage=50
 	DamageRadius=50
-	MomentumTransfer=1000 
+	MomentumTransfer=1000
 }

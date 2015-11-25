@@ -63,6 +63,7 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	{
 		InvManager.CreateInventory(class'G6Weap_Pistol');
 		InvManager.CreateInventory(class'G6Weap_Laser');
+		InvManager.CreateInventory(class'G6Weap_Shotgun');
 		InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
 
 		//Why doesn't this work?
