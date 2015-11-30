@@ -19,7 +19,7 @@ function RestartPlayer(Controller aPlayer)
 
 function Logout(controller Exiting)
 {
-	if (G6Bot_Melee(Exiting) != None) return;
+	if (UTBot(Exiting) != None) return;
 
 	super.Logout(Exiting);
 }

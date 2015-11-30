@@ -53,6 +53,7 @@ function DrawHUD()
 	local int mapScreenSize;
 	local intPoint mapScreenLoc;
 	local G6Wall W;
+	local Trigger T;
 
 	mapTexture = Texture2D'G6.Textures.Map';
 
@@ -116,9 +117,12 @@ function DrawHUD()
 	Canvas.Font = PlayerFont;
 	Canvas.SetPos(SizeX*0.015, SizeY*0.015);
 	if (p.roomCleared[p.curRoom] == 0 || MapLocationName == " " ) {
-		Canvas.SetDrawColorStruct(WhiteColor);
+		if (p.roomCleared[p.curRoom] == 0 && p.roomExplored[p.curRoom] == 1) 
+			Canvas.SetDrawColorStruct(RedColor);
+		else
+			Canvas.SetDrawColorStruct(WhiteColor);
 		Canvas.DrawText(MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
-	} else {
+	}else {
 		Canvas.SetDrawColorStruct(GreenColor);
 		Canvas.DrawText("Cleared: "$MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
 		p.bBattleMode = false;
@@ -129,9 +133,10 @@ function DrawHUD()
 	{
 		p.roomCleared[p.curRoom] = 1;
 		p.bBattleMode = false;
-		foreach AllActors( class'G6Wall', W )
+		p.cSkPts += p.roomPoints[p.curRoom];
+		foreach AllActors( class'Trigger', T )
 		{
-			W.bBlockActors = False;
+			T.SetCollision(True);
 		}
 	}
 

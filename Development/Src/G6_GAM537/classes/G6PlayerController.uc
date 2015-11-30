@@ -29,6 +29,7 @@ var int roomExplored[16];
 var int roomCleared[16];
 //Number of enemies left to kill
 var int roomSpawns[16];
+var int roomPoints[16];
 var float mapZooming;
 var float mapZoom;
 var bool bMapPan;
@@ -474,6 +475,22 @@ DefaultProperties
 	roomSpawns[13] = 3
 	roomSpawns[14] = 3
 	roomSpawns[15] = 1
+	roomPoints[0] = 3
+	roomPoints[1] = 3
+	roomPoints[2] = 3
+	roomPoints[3] = 3
+	roomPoints[4] = 3
+	roomPoints[5] = 3
+	roomPoints[6] = 3
+	roomPoints[7] = 3
+	roomPoints[8] = 3
+	roomPoints[9] = 3
+	roomPoints[10] = 3
+	roomPoints[11] = 3
+	roomPoints[12] = 3
+	roomPoints[13] = 3
+	roomPoints[14] = 3
+	roomPoints[15] = 3
 	mapZoom = 0.5;
 	bMapPan = false;
 	camOffset = (X=-400, Y=300, z=500)

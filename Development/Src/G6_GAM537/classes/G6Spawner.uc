@@ -21,7 +21,7 @@ function Timer()
 
 	random = Rand(10);
 
-	if (!bSpawn || BotsToSpawn <= 0 || random < 5)
+	if (!bSpawn || BotsToSpawn <= 0 || random <= 3)
 		return;
 
 	if (SpawnBot() != None)	BotsToSpawn--;

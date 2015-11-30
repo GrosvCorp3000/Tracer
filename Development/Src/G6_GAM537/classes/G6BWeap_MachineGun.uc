@@ -15,7 +15,7 @@ DefaultProperties
 {
 	AttachmentClass=class'G6BAttach_MachineGun'
 	
-	WeaponProjectiles(0)=class'UTBProj_MachineGun'
+	WeaponProjectiles(0)=class'G6BProj_MachineGun'
 	FireInterval[0] = 0.15;
 	WeaponRange=500
 	AmmoCount = 500

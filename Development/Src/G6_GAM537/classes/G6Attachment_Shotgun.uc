@@ -4,6 +4,7 @@ DefaultProperties
 {
 	Begin Object Name=SkeletalMeshComponent0
 		SkeletalMesh=SkeletalMesh'WP_ShockRifle.Mesh.SK_WP_ShockRifle_3P'
+		//SkeletalMesh=SkeletalMesh'VH_Cicada.Mesh.SK_VH_Cicada'
 		Translation=(Z=1)
 		Rotation=(Roll=-400)
 		Scale=0.9

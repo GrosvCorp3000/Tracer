@@ -8,16 +8,17 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vecto
 	local G6Pawn p;
 	local G6Wall A;
 	local G6Spawner S;
+	local Trigger T;
 
 	p = G6Pawn (Other);
 
 	if (p != None) {
 		pc = G6PlayerController (p.Controller);
 		if (pc.roomExplored[pc.curRoom] == 0) {
-			foreach AllActors( class'G6Wall', A )
+			foreach AllActors( class'Trigger', T )
 			{
 				//`Log("Trying to trigger ... "$A);
-				A.bBlockActors = True;
+				T.SetCollision(False);
 			}
 			foreach AllActors( class'G6Spawner', S )
 			{
