@@ -7,6 +7,23 @@ var Font PlayerFont;
 var float PlayerNameScale;
 var String MapLocationName;
 var Vector PawnLocation;
+var LinearColor LC_White;
+var LinearColor LC_Yellow;
+var intPoint mousePos;
+
+/**
+ * Draws a textured centered around the current position
+ */
+function DrawTileCentered(texture2D Tex, float xl, float yl, float u, float v, float ul, float vl, LinearColor C)
+{
+	local float x,y;
+
+	x = Canvas.CurX - (xl * 0.5);
+	y = Canvas.CurY - (yl * 0.5);
+
+	Canvas.SetPos(x,y, Canvas.CurZ);
+	Canvas.DrawTile(Tex, xl,yl,u,v,ul,vl,C);
+}
 
 /**
  * This is the main drawing pump.  It will determine which hud we need to draw (Game or PostGame).  Any drawing that should occur
@@ -20,6 +37,7 @@ function DrawHUD()
 	local G6PlayerInput p_input;
 	local float HealthPercent;
 	local float EnergyPercent;
+	local int mapRoom;
 	local int drawSkillTree1;
 	local int drawSkillTree2;
 	local int drawSkillTree3;
@@ -27,11 +45,23 @@ function DrawHUD()
 	local Texture2D weaponTex;
 	local float weaponUIscale;
 	local UTWeapon cur_weap;
+	//Map Variables
+	local bool inRoom;
+	local Texture2D mapTexture;
+	local intPoint mapDraw;
+	local intPoint playerMapVisual;
+	local int mapScreenSize;
+	local intPoint mapScreenLoc;
+	local G6Wall W;
+
+	mapTexture = Texture2D'G6.Textures.Map';
 
 	p = G6PlayerController (PlayerOwner);
 	p_input = G6PlayerInput (p.PlayerInput);
 	HealthPercent = p.Pawn.Health / float(p.Pawn.HealthMax);
 	EnergyPercent = p.cEnergy / float(p.cEnergyMax);
+
+	p.bBehindView = true;
 
 	super.DrawHUD();
 
@@ -53,6 +83,13 @@ function DrawHUD()
 		Canvas.DrawText("Player Speed: "$p.Pawn.GroundSpeed);
 
 		Canvas.DrawText("Battle Mode: "$p.bBattleMode);
+		Canvas.DrawText("Skill: "$p.bSkill);
+		Canvas.DrawText("Map: "$p.bMap);
+
+		Canvas.DrawText("CurrentRoom: "$p.roomName[p.curRoom]);
+		Canvas.DrawText("Room Trigger: "$p.roomExplored[p.curRoom]);
+		Canvas.DrawText("Room Cleared: "$p.roomCleared[p.curRoom]);
+		Canvas.DrawText("Bots to Killed: "$p.roomSpawns[p.curRoom]);
 
 		cur_weap = UTWeapon (p.pawn.Weapon);
 		Canvas.DrawText("Weapon: "$cur_weap.Name);
@@ -62,47 +99,41 @@ function DrawHUD()
 
 	//Determine the location via a very slow and manual way
 	PawnLocation = p.Pawn.Location;
-	if (PawnLocation.X > -5335 && PawnLocation.X < -3360 && PawnLocation.Y > -3550 && PawnLocation.Y < -2595) {
-		MapLocationName = "Player Start";
-	} else if (PawnLocation.X > -7899 && PawnLocation.X < -5923 && PawnLocation.Y > -3675 && PawnLocation.Y < -1700) {
-		MapLocationName = "The Sphere";
-	} else if (PawnLocation.X > -5467 && PawnLocation.X < -3492 && PawnLocation.Y > -2267 && PawnLocation.Y < -933) {
-		MapLocationName = "Scaffolding";
-	} else if (PawnLocation.X > -7900 && PawnLocation.X < -5925 && PawnLocation.Y > -1372 && PawnLocation.Y < -677) {
-		MapLocationName = "The Gallery";
-	} else if (PawnLocation.X > -7615 && PawnLocation.X < -6000 && PawnLocation.Y > -202 && PawnLocation.Y < 715) {
-		MapLocationName = "Containment";
-	} else if (PawnLocation.X > -4811 && PawnLocation.X < -2868 && PawnLocation.Y > -668 && PawnLocation.Y < 1185) {
-		MapLocationName = "Midlife";
-	} else if (PawnLocation.X > -2850 && PawnLocation.X < -500 && PawnLocation.Y > 36 && PawnLocation.Y < 475) {
-		MapLocationName = "Grand Crossing";
-	} else if (PawnLocation.X > -500 && PawnLocation.X < 2652 && PawnLocation.Y > -532 && PawnLocation.Y < 1045) {
-		MapLocationName = "Twins";
-	} else if (PawnLocation.X > -7900 && PawnLocation.X < -5156 && PawnLocation.Y > 1060 && PawnLocation.Y < 3802) {
-		MapLocationName = "Maze";
-	} else if (PawnLocation.X > -4570 && PawnLocation.X < -1588 && PawnLocation.Y > 1717 && PawnLocation.Y < 3659) {
-		MapLocationName = "Dais";
-	} else if (PawnLocation.X > -475 && PawnLocation.X < 2523 && PawnLocation.Y > 1573 && PawnLocation.Y < 3547){
-		MapLocationName = "Two Bridges";
-	} else if (PawnLocation.X > 3235 && PawnLocation.X < 5979 && PawnLocation.Y > 2723 && PawnLocation.Y < 3675) {
-		MapLocationName = "Crash Site";
-	} else if (PawnLocation.X > 3300 && PawnLocation.X < 7371 && PawnLocation.Y > -1740 && PawnLocation.Y < 2252) {
-		MapLocationName = "Final";
-	} else if (PawnLocation.X > -2780 && PawnLocation.X < -292 && PawnLocation.Y > -3655 && PawnLocation.Y < -675) {
-		MapLocationName = "Mist";
-	} else if (PawnLocation.X > 162 && PawnLocation.X < 3163 && PawnLocation.Y > -3675 && PawnLocation.Y < -932) {
-		MapLocationName = "Pond";
-	} else if (PawnLocation.X > 3620 && PawnLocation.X < 6107 && PawnLocation.Y > -3675 && PawnLocation.Y < -2212) {
-		MapLocationName = "Alien";
-	} else {
-		MapLocationName = "";
+	inRoom = false;
+	for(mapRoom = 0; mapRoom < 16; mapRoom++){
+		if(PawnLocation.X < p.roomLoc[mapRoom].X && PawnLocation.Y > p.roomLoc[mapRoom].Y && PawnLocation.X > p.roomLoc2[mapRoom].X && PawnLocation.Y < p.roomLoc2[mapRoom].Y){
+			MapLocationName = p.roomName[mapRoom];
+			p.curRoom = mapRoom;
+			//p.roomExplored[mapRoom] = 1;
+			inRoom = true;
+		}
+	}
+	if(!inRoom){
+		MapLocationName = " ";
 	}
 
 	//Display the location on HUD
 	Canvas.Font = PlayerFont;
-	Canvas.SetDrawColorStruct(WhiteColor);
 	Canvas.SetPos(SizeX*0.015, SizeY*0.015);
-	Canvas.DrawText(MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
+	if (p.roomCleared[p.curRoom] == 0 || MapLocationName == " " ) {
+		Canvas.SetDrawColorStruct(WhiteColor);
+		Canvas.DrawText(MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
+	} else {
+		Canvas.SetDrawColorStruct(GreenColor);
+		Canvas.DrawText("Cleared: "$MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
+		p.bBattleMode = false;
+	}
+
+	//Check if the Room is cleared
+	if (p.roomCleared[p.curRoom] == 0 && p.roomSpawns[p.curRoom] <= 0)
+	{
+		p.roomCleared[p.curRoom] = 1;
+		p.bBattleMode = false;
+		foreach AllActors( class'G6Wall', W )
+		{
+			W.bBlockActors = False;
+		}
+	}
 
 	if(p.Pawn.Health > 0){
 
@@ -143,40 +174,48 @@ function DrawHUD()
 				ColorBlink += ColorBlinkPositive * (2.1**((1-HealthPercent)*4)-1);
 				Canvas.SetDrawColor(intColorBlink,intColorBlink,intColorBlink);
 			}
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
 			Canvas.DrawRect(200,32);
 			//Health Bar
 			Canvas.SetDrawColor(255,0,0);
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
 			Canvas.DrawRect(HealthPercent*200,32);
 			//Health Bar Outline
 			Canvas.SetDrawColor(128,0,0);
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-100);
 			Canvas.DrawBox(200,32);
 	
 			//Energy Bar Background
 			Canvas.SetDrawColor(0,0,0);
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
 			Canvas.DrawRect(200,32);
 			//Energy Bar
 			Canvas.SetDrawColor(128,128,0);
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
 			Canvas.DrawRect(EnergyPercent*200,32);
 			//Energy Bar Outline
 			Canvas.SetDrawColor(192,192,0);
-			Canvas.SetPos(30 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
 			Canvas.DrawBox(200,32);
 
 			//Draw Numbers
 			Canvas.Font = PlayerFont;
 			Canvas.SetDrawColorStruct(WhiteColor);
-			Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
 			//Health Number
-			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-95);
+			Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
+			Canvas.SetPos(100 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-95);
 			Canvas.DrawText(p.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 			//Energy Number
-			Canvas.SetPos(70 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-43);
+			Canvas.TextSize(p.cEnergy, TextSize.X, TextSize.Y);
+			Canvas.SetPos(100 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.cEnergy/100),0,1) * 10) - (Clamp(1-FCeil(p.cEnergy/10),0,1) * 10),SizeY-43);
 			Canvas.DrawText(p.cEnergy,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
+
+			//Health Icon
+			Canvas.SetPos(SizeX * 0.025, SizeY-84);
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 42, 30, 216, 102, 56, 40, LC_White);
+			//Energy Icon
+			Canvas.SetPos(SizeX * 0.025, SizeY-32);
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseB', 19, 30, 635, 267, 24, 38, LC_Yellow);
 		}
 		
 		
@@ -186,6 +225,73 @@ function DrawHUD()
 		Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
 		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
 		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
+	}
+
+	//Draw Weapon HUD
+	weaponUIscale = 0.9;
+	//First weapon
+	weaponTex = Texture2D'UDKHUD.ut3_weapon6_color';
+	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
+	if(p.Pawn.Weapon == p.Pawn.InvManager.FindInventoryType(class'G6Weap_Pistol')){
+		Canvas.SetDrawColor(200, 200, 225);
+	}else{
+		Canvas.SetDrawColor(255,255,255);
+	}
+	if(p.currentWeapon == 1){
+		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+	}
+	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
+	Canvas.Font = PlayerFont;
+	Canvas.DrawText("1",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
+	Canvas.SetPos(SizeX * 0.3, SizeY * 0.85);
+	Canvas.DrawTexture(weaponTex, weaponUIscale);
+	//Second weapon
+	if(p.Pawn.InvManager.FindInventoryType(class'G6Weap_Laser') != None){
+		Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
+		if(p.Pawn.Weapon == p.Pawn.InvManager.FindInventoryType(class'G6Weap_Laser')){
+			Canvas.SetDrawColor(200, 200, 225);
+		}else{
+			Canvas.SetDrawColor(255,255,255);
+		}
+		if(p.currentWeapon == 2){
+			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+		}
+		Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
+		Canvas.DrawText("2",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
+		Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale, SizeY * 0.85);
+		Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon10_color', weaponUIscale);
+	}
+	//Third weapon
+	if(p.Pawn.InvManager.FindInventoryType(class'G6Weap_Shotgun') != None){
+		Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
+		if(p.Pawn.Weapon == p.Pawn.InvManager.FindInventoryType(class'G6Weap_Shotgun')){
+			Canvas.SetDrawColor(200, 200, 225);
+		}else{
+			Canvas.SetDrawColor(255,255,255);
+		}
+		if(p.currentWeapon == 3){
+			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+		}
+		Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
+		Canvas.DrawText("3",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
+		Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2, SizeY * 0.85);
+		Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon4_color', weaponUIscale);
+	}
+	//Fourth weapon
+	if(p.Pawn.InvManager.FindInventoryType(class'G6Weap_RocketLauncher_Content') != None){
+		Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
+		if(p.Pawn.Weapon == p.Pawn.InvManager.FindInventoryType(class'G6Weap_RocketLauncher_Content')){
+			Canvas.SetDrawColor(200, 200, 225);
+		}else{
+			Canvas.SetDrawColor(255,255,255);
+		}
+		if(p.currentWeapon == 4){
+			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
+		}
+		Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
+		Canvas.DrawText("4",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
+		Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3, SizeY * 0.85);
+		Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon8_color', weaponUIscale);
 	}
 
 	//Draw the level and skill points display
@@ -260,6 +366,7 @@ function DrawHUD()
 						if(drawSkillTree1*5+drawSkillTree2 == 3){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
 							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
+							p.currentWeapon = 2;
 						}
 						//Laser Upgrade Requirement
 						if(drawSkillTree1*5+drawSkillTree2 == 4 && p.skills[3] == 1){
@@ -285,6 +392,7 @@ function DrawHUD()
 						if(drawSkillTree1*5+drawSkillTree2 == 8){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
 							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
+							p.currentWeapon = 3;
 						}
 						//Shotgun Upgrade Requirement
 						if(drawSkillTree1*5+drawSkillTree2 == 9 && p.skills[8] == 1){
@@ -310,6 +418,7 @@ function DrawHUD()
 						if(drawSkillTree1*5+drawSkillTree2 == 13){
 							p.skills[drawSkillTree1*5+drawSkillTree2] = 1;
 							p.cSkPts -= p.skillRequirement[drawSkillTree1*5+drawSkillTree2];
+							p.currentWeapon = 4;
 						}
 						//Rocket Upgrade Requirement
 						if(drawSkillTree1*5+drawSkillTree2 == 14 && p.skills[13] == 1){
@@ -348,65 +457,76 @@ function DrawHUD()
 				}
 			}
 		}
+	}
 
+	//Draw the Map
+	if(p.bMap){
+		if(p.mapZooming != p.mapZoom){
+			p.mapZooming -= (p.mapZooming - p.mapZoom)/4;
+			if((p.mapZooming - p.mapZoom < 0.005 && p.mapZooming > p.mapZoom) || (p.mapZoom - p.mapZooming < 0.005 && p.mapZooming < p.mapZoom)){
+				p.mapZooming = p.mapZoom;
+			}
+		}
+		p.playerMapLoc.Y = (8191-p.Pawn.Location.X) / 16;
+		p.playerMapLoc.X = (p.Pawn.Location.Y + 4095) / 16;
+		Clamp(p.playerMapLoc.X, 0, mapTexture.SizeX);
+		Clamp(p.playerMapLoc.Y, 0, mapTexture.SizeY);
+
+		mapDraw.X = p.mapFocus.X - (256 * p.mapZooming);
+		mapDraw.Y = p.mapFocus.Y - (256 * p.mapZooming);
+
+		if(mapDraw.X <= 0){
+			mapDraw.X = 0;
+			p.mapFocus.X = (256 * p.mapZooming);
+		}else if(mapDraw.X + (512 * p.mapZooming) >= mapTexture.SizeX){
+			mapDraw.X = mapTexture.SizeX - (512 * p.mapZooming);
+			p.mapFocus.X = mapTexture.SizeX - (256 * p.mapZooming);
+		}
+		if(mapDraw.Y <= 0){
+			mapDraw.Y = 0;
+			p.mapFocus.Y = (256 * p.mapZooming);
+		}else if(mapDraw.Y + (512 * p.mapZooming) >= mapTexture.SizeY){
+			mapDraw.Y = mapTexture.SizeY - (512 * p.mapZooming);
+			p.mapFocus.Y = mapTexture.SizeY - (256 * p.mapZooming);
+		}
+
+		mapScreenSize = SizeY * 0.8;
+		mapScreenLoc.X = ((SizeX - mapScreenSize) / 2) + (SizeX * 0.1);
+		mapScreenLoc.Y = SizeY * 0.1;
+		if(p.bMapPan && p_input.MousePosition.X > mapScreenLoc.X && p_input.MousePosition.X < mapScreenLoc.X + mapScreenSize && p_input.MousePosition.Y > mapScreenLoc.Y && p_input.MousePosition.Y < mapScreenLoc.Y + mapScreenSize){
+			p.mapFocus.X -= (p_input.MousePosition.X - mousePos.X) * p.mapZooming;
+			p.mapFocus.Y -= (p_input.MousePosition.Y - mousePos.Y) * p.mapZooming;
+		}
+		mousePos.X = p_input.MousePosition.X;
+		mousePos.Y = p_input.MousePosition.Y;
+
+		//Map Texture
+		Canvas.SetPos(mapScreenLoc.X + mapScreenSize/2, mapScreenLoc.Y + mapScreenSize/2);
+		DrawTileCentered(mapTexture, mapScreenSize, mapScreenSize, mapDraw.X, mapDraw.Y, 512 * p.mapZooming, 512 * p.mapZooming, LC_White);
+
+		//Player On Map
+		playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (p.playerMapLoc.X - mapDraw.X));
+		playerMapVisual.Y = mapScreenLoc.Y + (((mapScreenSize / (512 * p.mapZooming))) * (p.playerMapLoc.Y - mapDraw.Y));
+		if(playerMapVisual.X > mapScreenLoc.X && playerMapVisual.X < mapScreenLoc.X + mapScreenSize){
+			if(playerMapVisual.Y > mapScreenLoc.Y && playerMapVisual.Y < mapScreenLoc.Y + mapScreenSize){
+				Canvas.SetDrawColor(255,0,0,196);
+				Canvas.SetPos(playerMapVisual.X - (3.5 * ((1-p.mapZooming)/2 + p.mapZooming)), playerMapVisual.Y - (3.5 * ((1-p.mapZooming)/2 + p.mapZooming)));
+				Canvas.DrawRect(7 * ((1-p.mapZooming)/1.5 + p.mapZooming), 7 * ((1-p.mapZooming)/1.5 + p.mapZooming));
+			}
+		}
+		
+		//Border
+		Canvas.SetDrawColor(255,255,255);
+		Canvas.SetPos(mapScreenLoc.X, mapScreenLoc.Y);
+		Canvas.DrawBox(mapScreenSize, mapScreenSize);
+	}
+
+	if(p_input.bControllingCursor){
 		//Now draw the cursor on screen
 		Canvas.SetDrawColor(0,0,230);
 		Canvas.SetPos(p_input.MousePosition.X, p_input.MousePosition.Y);
 		Canvas.DrawTexture(Texture2D'UDKHUD.cursor_png', 1);
-		
 	}
-
-	//Draw Weapon HUD
-	Canvas.SetDrawColor(255,255,255);
-	weaponUIscale = 0.9;
-	//First weapon
-	weaponTex = Texture2D'UDKHUD.ut3_weapon4_color';
-	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	if(p.currentWeapon == 1){
-		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
-	}
-	Canvas.SetPos(SizeX * 0.3 + weaponTex.SizeX * weaponUIscale * 0.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
-	Canvas.Font = PlayerFont;
-	Canvas.DrawText("1",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
-	Canvas.SetPos(SizeX * 0.3, SizeY * 0.85);
-	Canvas.DrawTexture(weaponTex, weaponUIscale);
-	//Second weapon
-	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	if(p.currentWeapon == 2){
-		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
-	}
-	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale * 1.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
-	Canvas.DrawText("2",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
-	Canvas.SetPos(SizeX * 0.32 + weaponTex.SizeX * weaponUIscale, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon10_color', weaponUIscale);
-	//Third weapon
-	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	if(p.currentWeapon == 3){
-		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
-	}
-	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
-	Canvas.DrawText("3",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
-	Canvas.SetPos(SizeX * 0.34 + weaponTex.SizeX * weaponUIscale * 2, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon6_color', weaponUIscale);
-	//Fourth weapon
-	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.25, SizeY * 0.85 + weaponTex.SizeY * weaponUIscale);
-	if(p.currentWeapon == 4){
-		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
-	}
-	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3.42, SizeY * 0.855 + weaponTex.SizeY * weaponUIscale);
-	Canvas.DrawText("4",,PlayerNameScale / RatioX,PlayerNameScale * 0.7 / RatioY);
-	Canvas.SetPos(SizeX * 0.36 + weaponTex.SizeX * weaponUIscale * 3, SizeY * 0.85);
-	Canvas.DrawTexture(Texture2D'UDKHUD.ut3_weapon8_color', weaponUIscale);
-
-	//HealthIcon=(Texture=Texture2D'UDNHUDContent.UDN_HUDGraphics',U=72,V=8,UL=48,VL=48)
-		//Texture2D'UDKHUD.udk_inventory_I1'
-		//Texture2D'UDKHUD.ut3_weapon5_color'
-	//Texture2D'UDKHUD.ut3_weapon6_color'
-	//Texture2D'UDKHUD.ut3_weapon7_color'
-	//Texture2D'UDKHUD.ut3_weapon8_color'
-	//Texture2D'UDKHUD.ut3_weapon9_color'
-	//Texture2D'UDKHUD.ut3_weapon4_color'
-
 }
 
 DefaultProperties
@@ -416,4 +536,6 @@ DefaultProperties
 	ColorBlink = 0
 	intColorBlink = 0
 	ColorBlinkPositive = 1
+	LC_White=(R=1.0,G=1.0,B=1.0,A=1.0)
+	Lc_Yellow=(R=0.8,G=0.8,B=0.0,A=1.0)
 }

@@ -10,7 +10,6 @@ simulated function Array<vector> InstantFireEndTraceA(Array<vector> StartTrace)
 	local Array<vector> EndTrace;
 	local color myColor;
 	local G6PlayerController p;
-	local int i;
 	local rotator tRotator;
 	
 	p = G6PlayerController (Instigator.Controller);
@@ -134,7 +133,7 @@ DefaultProperties
 	ShotCost[0] = 1
 	WeaponFireAnim[0]=WeaponFire
 	InstantHitDamage[0]=10
-	InstantHitMomentum[0]=100000
+	InstantHitMomentum[0]=50000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
 
 	AttachmentClass=class'G6Attachment_Shotgun'
@@ -142,7 +141,7 @@ DefaultProperties
 	InventoryGroup=3
 
 	AmmoCount = 100
-	MaxAmmoCount = 500
+	MaxAmmoCount = 200
 
 	WeaponRange = 250
 }

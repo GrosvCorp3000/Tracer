@@ -1,5 +1,29 @@
 class G6Game extends UTDeathmatch;
 
+function RestartPlayer(Controller aPlayer)
+{
+	local G6PlayerController P;
+
+	if (UTBot(aPlayer) != None && aPlayer.IsInState('Dead'))
+	{
+		foreach AllActors( class'G6PlayerController', P ) {
+			P.roomSpawns[P.curRoom]--;
+		}
+		aPlayer.Destroy();
+	}
+	else
+	{
+		super.RestartPlayer(aPlayer);
+	}
+}
+
+function Logout(controller Exiting)
+{
+	if (G6Bot_Melee(Exiting) != None) return;
+
+	super.Logout(Exiting);
+}
+
 DefaultProperties
 {
 	PlayerControllerClass = class'G6PlayerController'

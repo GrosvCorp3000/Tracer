@@ -27,15 +27,33 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 		}
 
 		if(p.skills[1] == 1){
-			HealthMax = 200;
+			HealthMax = 300;
 		}else if(p.skills[0] == 1){
-			HealthMax = 150;
+			HealthMax = 250;
 		}
 	
 		if(p.skills[6] == 1){
 			p.cEnergyMax = 300;
 		}else if(p.skills[5] == 1){
 			p.cEnergyMax = 200;
+		}
+
+		if(p.skills[3] == 1){
+			if(p.Pawn.FindInventoryType(class'G6Weap_Laser') == None){
+				InvManager.CreateInventory(class'G6Weap_Laser');
+			}
+		}
+
+		if(p.skills[8] == 1){
+			if(p.Pawn.FindInventoryType(class'G6Weap_Shotgun') == None){
+				InvManager.CreateInventory(class'G6Weap_Shotgun');
+			}
+		}
+
+		if(p.skills[13] == 1){
+			if(p.Pawn.FindInventoryType(class'G6Weap_RocketLauncher_Content') == None){
+				InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
+			}
 		}
 
 		curHeld = UTWeapon (Weapon);
@@ -62,9 +80,9 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	if (PC != None)
 	{
 		InvManager.CreateInventory(class'G6Weap_Pistol');
-		InvManager.CreateInventory(class'G6Weap_Laser');
-		InvManager.CreateInventory(class'G6Weap_Shotgun');
-		InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
+		//InvManager.CreateInventory(class'G6Weap_Laser');
+		//InvManager.CreateInventory(class'G6Weap_Shotgun');
+		//InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
 
 		//Why doesn't this work?
 		PC.SwitchWeapon(1);
@@ -74,6 +92,8 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 
 DefaultProperties
 {
+	Health = 200
+	HealthMax = 200
 	GroundSpeed = 800
 	
 }

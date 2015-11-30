@@ -6,6 +6,7 @@ var int unitHE;
 var bool bWUI;
 var bool bBattleMode;
 var bool bSkill;
+var bool bMap;
 
 //Character attributes
 var int cEnergy;
@@ -16,6 +17,23 @@ var int cSkPts;
 
 var int currentWeapon;
 var UTWeapon curWeapon;
+
+//Map Variables
+var int curRoom;
+var intPoint roomLoc[16];
+var intPoint roomLoc2[16];
+var String roomName[16];
+//Player has entered room, currently in battle status
+var int roomExplored[16];
+//All enemies in room are dead, room cleared
+var int roomCleared[16];
+//Number of enemies left to kill
+var int roomSpawns[16];
+var float mapZooming;
+var float mapZoom;
+var bool bMapPan;
+var intPoint mapFocus;
+var intPoint playerMapLoc;
 
 //Skill tree components
 /* skills[0] - Health
@@ -77,9 +95,21 @@ function UpdateRotation( float DeltaTime )
 }
 
 exec function PrevWeapon() {
+	if(mapZoom > 0.35){
+		mapZoom -= 0.15;
+	}
+	if(mapZoom < 0.35){
+		mapZoom = 0.35;
+	}
 }
 
 exec function NextWeapon() {
+	if(mapZoom < 1){
+		mapZoom += 0.15;
+	}
+	if(mapZoom > 1){
+		mapZoom = 1;
+	}
 }
 
 exec function StartFire( optional byte FireModeNum )
@@ -98,35 +128,8 @@ exec function StartFire( optional byte FireModeNum )
 
 exec function StopFire( optional byte FireModeNum )
 {
-	if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Laser')){
-		super.StopFire( 1 );
-	}else{
-		super.StopFire(FireModeNum);
-	}
-}
-
-// The player wants to alternate-fire.
-exec function StartAltFire( optional Byte FireModeNum )
-{
-	local G6PlayerInput p_input;
-	p_input = G6PlayerInput (PlayerInput);
-
-	if(!p_input.bControllingCursor) {
-		if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Pistol')){
-			super.StartFire( 0 );
-		}else{
-			super.StartFire( 1 );
-		}
-	}
-}
-
-exec function StopAltFire( optional byte FireModeNum )
-{
-	if(Pawn.Weapon == Pawn.InvManager.FindInventoryType(class'G6Weap_Pistol')){
-		super.StopFire( 0 );
-	}else{
-		super.StopFire( 1 );
-	}
+	super.StopFire( 0 );
+	super.StopFire( 1 );
 }
 
 exec function SwitchWeapon(byte T)
@@ -136,6 +139,7 @@ exec function SwitchWeapon(byte T)
 		super.SwitchWeapon(T);
 		curWeapon = UTWeapon (Pawn.Weapon);
 		curWeapon.MaxAmmoCount = cEnergyMax;
+		StopFire();
 	}
 }
 
@@ -143,11 +147,42 @@ exec function ToggleSkillTree()
 {
 	local G6PlayerInput p_input;
 	p_input = G6PlayerInput (PlayerInput);
-	if (Pawn != none && !bBattleMode) {
+	if (Pawn != none && !bBattleMode && !bMap) {
 		p_input.bControllingCursor = !p_input.bControllingCursor;
 		bSkill = !bSkill;
 		IgnoreMoveInput(bSkill);
 	}
+}
+
+exec function ToggleMapDisplay()
+{
+	local G6PlayerInput p_input;
+	p_input = G6PlayerInput (PlayerInput);
+	if (Pawn != none && !bBattleMode && !bSkill) {
+		p_input.bControllingCursor = !p_input.bControllingCursor;
+		bMap = !bMap;
+		IgnoreMoveInput(bMap);
+		mapZoom = 0.5;
+		mapZooming = mapZoom;
+		playerMapLoc.Y = (8191-Pawn.Location.X) / 16;
+		playerMapLoc.X = (Pawn.Location.Y + 4095) / 16;
+		Clamp(playerMapLoc.X, 0, 512);
+		Clamp(playerMapLoc.Y, 0, 1024);
+		mapFocus.X = playerMapLoc.X;
+		mapFocus.Y = playerMapLoc.Y;
+	}
+}
+
+exec function StartMapPan()
+{
+	if(bMap){
+		bMapPan = true;
+	}
+}
+
+exec function StopMapPan()
+{
+	bMapPan = false;
 }
 
 exec function ToggleBattle() 
@@ -156,6 +191,9 @@ exec function ToggleBattle()
 		 bBattleMode = !bBattleMode;
 		 if(bSkill){
 			ToggleSkillTree();
+		 }
+		 if(bMap){
+			ToggleMapDisplay();
 		 }
 	}
 }
@@ -334,10 +372,110 @@ DefaultProperties
 	cEnergyMax = 100
 	bSkill = false
 	bBattleMode = false
+	bMap = false
 	debug = false
 	unitHE = 0
 	bBehindView = true
 	currentWeapon = 1
+	curRoom = 0
+	roomLoc[0] = (X=-3327, Y=-3583)
+	roomLoc2[0] = (X=-5375, Y=-2559)
+	roomLoc[1] = (X=-5887, Y=-3711)
+	roomLoc2[1] = (X=-7935, Y=-1663)
+	roomLoc[2] = (X=-5887, Y=-1407)
+	roomLoc2[2] = (X=-7935, Y=-639)
+	roomLoc[3] = (X=-6015, Y=-225)
+	roomLoc2[3] = (X=-7679, Y=768)
+	roomLoc[4] = (X=-5119, Y=1024)
+	roomLoc2[4] = (X=-7935, Y=3840)
+	roomLoc[5] = (X=-3455, Y=-2303)
+	roomLoc2[5] = (X=-5503, Y=-895) 
+	roomLoc[6] = (X=-2815, Y=-767)
+	roomLoc2[6] = (X=-4863, Y=1280)
+	roomLoc[7] = (X=-255, Y=-3711)
+	roomLoc2[7] = (X=-2815, Y=-639)
+	roomLoc[8] = (X=-511, Y=0)
+	roomLoc2[8] = (X=-2815, Y=512)
+	roomLoc[9] = (X=-1535, Y=1664)
+	roomLoc2[9] = (X=-4607, Y=3712)
+	roomLoc[10] = (X=3200, Y=-3711)
+	roomLoc2[10] = (X=128, Y=-895)
+	roomLoc[11] = (X=2668, Y=-639)
+	roomLoc2[11] = (X=-511, Y=1152)
+	roomLoc[12] = (X=2560, Y=1536)
+	roomLoc2[12] = (X=-511, Y=3584)
+	roomLoc[13] = (X=6144, Y=-3711)
+	roomLoc2[13] = (X=3584, Y=-2175)
+	roomLoc[14] = (X=6016, Y=2688)
+	roomLoc2[14] = (X=3200, Y=3712)
+	roomLoc[15] = (X=7424, Y=-1791)
+	roomLoc2[15] = (X=3328, Y=2304)
+	roomName[0] = "Player Start"
+	roomName[1] = "The Sphere"
+	roomName[2] = "The Gallery"
+	roomName[3] = "Containment"
+	roomName[4] = "Maze"
+	roomName[5] = "Scaffolding"
+	roomName[6] = "Midlife"
+	roomName[7] = "Mist"
+	roomName[8] = "Grand Crossing"
+	roomName[9] = "Dais"
+	roomName[10] = "Pond"
+	roomName[11] = "Twins"
+	roomName[12] = "Two Bridges"
+	roomName[13] = "Alien"
+	roomName[14] = "Crash Site"
+	roomName[15] = "Final"
+	roomExplored[0] = 0
+	roomExplored[1] = 0
+	roomExplored[2] = 0
+	roomExplored[3] = 0
+	roomExplored[4] = 0
+	roomExplored[5] = 0
+	roomExplored[6] = 0
+	roomExplored[7] = 0
+	roomExplored[8] = 0
+	roomExplored[9] = 0
+	roomExplored[10] = 0
+	roomExplored[11] = 0
+	roomExplored[12] = 0
+	roomExplored[13] = 0
+	roomExplored[14] = 0
+	roomExplored[15] = 0
+	roomCleared[0] = 0
+	roomCleared[1] = 0
+	roomCleared[2] = 0
+	roomCleared[3] = 0
+	roomCleared[4] = 0
+	roomCleared[5] = 0
+	roomCleared[6] = 0
+	roomCleared[7] = 0
+	roomCleared[8] = 0
+	roomCleared[9] = 0
+	roomCleared[10] = 0
+	roomCleared[11] = 0
+	roomCleared[12] = 0
+	roomCleared[13] = 0
+	roomCleared[14] = 0
+	roomCleared[15] = 0
+	roomSpawns[0] = 3
+	roomSpawns[1] = 9
+	roomSpawns[2] = 3
+	roomSpawns[3] = 3
+	roomSpawns[4] = 3
+	roomSpawns[5] = 3
+	roomSpawns[6] = 3
+	roomSpawns[7] = 3
+	roomSpawns[8] = 3
+	roomSpawns[9] = 3
+	roomSpawns[10] = 3
+	roomSpawns[11] = 3
+	roomSpawns[12] = 3
+	roomSpawns[13] = 3
+	roomSpawns[14] = 3
+	roomSpawns[15] = 1
+	mapZoom = 0.5;
+	bMapPan = false;
 	camOffset = (X=-400, Y=300, z=500)
 	InputClass = class'G6PlayerInput'
 }
