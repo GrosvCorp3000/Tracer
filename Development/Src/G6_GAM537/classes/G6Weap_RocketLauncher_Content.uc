@@ -44,8 +44,8 @@ defaultproperties
 	LockAcquiredSound=SoundCue'A_Weapon_RocketLauncher.Cue.A_Weapon_RL_SeekLock_Cue'
 	LockLostSound=SoundCue'A_Weapon_RocketLauncher.Cue.A_Weapon_RL_SeekLost_Cue'
 
-	WeaponProjectiles(0)=class'UTProj_Rocket'
-	WeaponProjectiles(1)=class'UTProj_Rocket'
+	WeaponProjectiles(0)=class'G6Proj_Rocket'
+	WeaponProjectiles(1)=class'G6Proj_Rocket'
 	LoadedRocketClass=class'UTProj_LoadedRocket'
 
 	GrenadeClass=class'UTProj_Grenade'
@@ -66,7 +66,7 @@ defaultproperties
 
 	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Rocket_Cue'
 
-	AmmoCount=9
+	AmmoCount=20
 	LockerAmmoCount=18
 	MaxAmmoCount=30
 
@@ -114,7 +114,7 @@ defaultproperties
 
 	EquipTime=+0.6
 
-	GrenadeSpreadDist=300
+	GrenadeSpreadDist=550
 
 	JumpDamping=0.75
 

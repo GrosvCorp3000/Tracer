@@ -1,19 +1,19 @@
-class G6Bot_Gunner extends UTBot;
+class L9Bot extends UTBot;
 
 var float AggroDistance;
 var float EscapeDistance;
 var float AttackDistance;
 var float PatrolPointReachedThreshold;
-var G6PatrolPath NextPatrolPoint;
-var G6Spawner MySpawner;
+var L9PatrolPath NextPatrolPoint;
+var L9AISpawner MySpawner;
 
 var private Actor _intermediate;
 var private float _dist;
 
-function EnterPatrolPath(G6PatrolPath path)
+function EnterPatrolPath(L9PatrolPath path)
 {
 	NextPatrolPoint = path;
-	MySpawner = G6Spawner(path);
+	MySpawner = L9AISpawner(path);
 
 	if (path != None)
 	{
@@ -28,14 +28,12 @@ function EnterPatrolPath(G6PatrolPath path)
 	}
 }
 
-/*
 function PawnDied(Pawn p)
 {
 	if (MySpawner != None)
 		MySpawner.BotsToSpawn++;
 	super.PawnDied(p);
 }
-*/
 
 function HuntEnemy(Pawn p)
 {
@@ -152,7 +150,7 @@ Begin:
 DefaultProperties
 {
 	PatrolPointReachedThreshold=50
-	AggroDistance=800
+	AggroDistance=600
 	EscapeDistance=1500
-	AttackDistance=600
+	AttackDistance=300
 }

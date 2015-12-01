@@ -3,7 +3,7 @@ class G6Weap_Pistol extends UTWeapon;
 defaultproperties
 {
 	WeaponColor=(R=255,G=0,B=0,A=255)
-	FireInterval(0)=+0.24
+	FireInterval(0)=+0.22
 	PlayerViewOffset=(X=16.0,Y=-18,Z=-18.0)
 
 	AttachmentClass=class'G6Attachment_Pistol'

@@ -1,12 +1,8 @@
-class G6Spawner extends G6PatrolPath
-	placeable
-	ClassGroup(GROUP6);
+class L9AISpawner extends L9PatrolPath
+	placeable;
 
 var(Spawner) int BotsToSpawn;
 var(Spawner) float SpawnInterval;
-
-var bool bSpawn;
-
 
 function PostBeginPlay()
 {
@@ -14,38 +10,26 @@ function PostBeginPlay()
 	SetTimer(SpawnInterval, true);
 }
 
-
 function Timer()
 {
-	local int random;
-
-	random = Rand(12);
-
-	if (!bSpawn || BotsToSpawn <= 0 || random < 5)
+	if (BotsToSpawn <= 0)
+	{
 		return;
+	}
 
 	if (SpawnBot() != None)	BotsToSpawn--;
 }
 
-function UTBot SpawnBot()
+function L9Bot SpawnBot()
 {
-	local UTBot NewBot;
+	local L9Bot NewBot;
 	local Pawn NewPawn;
 	local rotator StartRotation;
-	local int random;
-
-	random = Rand(10);
-
-	if (random < 3)
-		NewBot = Spawn(class'G6Bot_Gunner');
-	else if (random < 6)
-		NewBot = Spawn(class'G6Bot_Grenadier');
-	else
-		NewBot = Spawn(class'G6Bot_Melee');
-
+	
+	NewBot = Spawn(class'L9Bot');
 	if (NewBot == None)
 	{
-		`log("Couldn't spawn at "$self);
+		`log("Couldn't spawn "$class'L9Bot'$" at "$self);
 		return None;
 	}
 
@@ -68,21 +52,7 @@ function UTBot SpawnBot()
 	WorldInfo.Game.AddDefaultInventory(NewPawn);
 	WorldInfo.Game.SetPlayerDefaults(NewPawn);
 
-	if (random < 3)
-	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_MachineGun');
-		G6Bot_Gunner (NewBot).EnterPatrolPath(self);
-	}
-	else if (random < 6) 
-	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_GrenadeLauncher_Content');
-		G6Bot_Grenadier (NewBot).EnterPatrolPath(self);
-	}
-	else
-	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_Sword');
-		G6Bot_Melee (NewBot).EnterPatrolPath(self);
-	}
+	NewBot.EnterPatrolPath(self);
 
 	return NewBot;
 }
@@ -95,8 +65,7 @@ DefaultProperties
 	Components.Add(DisplayMesh)
 
 	BotsToSpawn = 3
-	SpawnInterval = 3
+	SpawnInterval = 2
 
 	bStatic = false
-	bSpawn = false
 }

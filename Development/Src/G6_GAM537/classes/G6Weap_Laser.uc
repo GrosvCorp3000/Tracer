@@ -1240,7 +1240,7 @@ defaultproperties
 	bAutoCharge=false
 	RechargeRate=1.0
 
-	WeaponRange=1000
+	WeaponRange=1200
 	LinkStrength=1
 	LinkFlexibility=0.64	// determines how easy it is to maintain a link.
 							// 1=must aim directly at linkee, 0=linkee can be 90 degrees to either side of you

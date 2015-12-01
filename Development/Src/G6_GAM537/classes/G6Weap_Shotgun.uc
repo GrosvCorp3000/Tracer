@@ -129,12 +129,20 @@ simulated function InstantFire()
 DefaultProperties
 {
 	WeaponFireTypes[0] = EWFT_InstantHit
-	FireInterval[0] = 0.5
+	FireInterval[0] = 0.8
 	ShotCost[0] = 1
 	WeaponFireAnim[0]=WeaponFire
-	InstantHitDamage[0]=10
-	InstantHitMomentum[0]=50000
+	InstantHitDamage[0]=35
+	InstantHitMomentum[0]=80000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
+
+	WeaponFireTypes[1] = EWFT_InstantHit
+	FireInterval[1] = 0.8
+	ShotCost[1] = 1
+	WeaponFireAnim[1]=WeaponFire
+	InstantHitDamage[1]=35
+	InstantHitMomentum[1]=80000
+	InstantHitDamageTypes[1]=class'UTDmgType_CicadaLaser'
 
 	AttachmentClass=class'G6Attachment_Shotgun'
 
@@ -143,5 +151,5 @@ DefaultProperties
 	AmmoCount = 100
 	MaxAmmoCount = 200
 
-	WeaponRange = 250
+	WeaponRange = 300
 }

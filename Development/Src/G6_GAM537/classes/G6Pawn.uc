@@ -27,9 +27,9 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 		}
 
 		if(p.skills[1] == 1){
-			HealthMax = 300;
+			HealthMax = 500;
 		}else if(p.skills[0] == 1){
-			HealthMax = 250;
+			HealthMax = 400;
 		}
 	
 		if(p.skills[6] == 1){
@@ -92,8 +92,8 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 
 DefaultProperties
 {
-	Health = 200
-	HealthMax = 200
+	Health = 300
+	HealthMax = 300
 	GroundSpeed = 800
 	
 }

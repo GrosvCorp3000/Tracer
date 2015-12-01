@@ -52,7 +52,6 @@ function DrawHUD()
 	local intPoint playerMapVisual;
 	local int mapScreenSize;
 	local intPoint mapScreenLoc;
-	local G6Wall W;
 	local Trigger T;
 
 	mapTexture = Texture2D'G6.Textures.Map';

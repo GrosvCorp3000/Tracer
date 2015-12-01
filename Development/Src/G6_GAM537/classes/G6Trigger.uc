@@ -6,7 +6,6 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vecto
 {
 	local G6PlayerController pc;
 	local G6Pawn p;
-	local G6Wall A;
 	local G6Spawner S;
 	local Trigger T;
 
