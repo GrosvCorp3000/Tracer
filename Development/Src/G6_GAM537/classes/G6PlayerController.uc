@@ -72,6 +72,7 @@ var String enemyTypes[16];
 var bool bAttemptRespawn;
 
 var vector camOffset;
+var bool bCamType;
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
 function Rotator GetAdjustedAimFor( Weapon W, vector StartFireLoc )
@@ -231,6 +232,22 @@ exec function ToggleWUI()
 {
 	if (Pawn != none) {
 		bWUI = !bWUI;
+	}
+}
+
+exec function ToggleCam() 
+{
+	if (Pawn != none) {
+		bCamType = !bCamType;
+	}
+	if (bCamType) {
+		camOffset.X = -300;
+		camOffset.Y = 100;
+		camOffset.Z = 300;
+	} else {
+		camOffset.X = -400;
+		camOffset.Y = 300;
+		camOffset.Z = 500;
 	}
 }
 
@@ -519,9 +536,18 @@ DefaultProperties
 	roomPoints[13] = 3
 	roomPoints[14] = 3
 	roomPoints[15] = 3
+
+	/*
+	 * Enemy Type:
+	 *  0: G6Bot_Melee
+	 *  1: G6Bot_Gunner
+	 *  2: G6Bot_Grenadier
+	 *  3: G6Bot_ShockBaller
+	 *  4: G6Bot_Sniper
+	 */
 	enemyTypes[0] = "0"
 	//enemyTypes[1] = "0001112233"
-	enemyTypes[1] = "1122444444"
+	enemyTypes[1] = "0011223344"
 	enemyTypes[2] = "1111223355"
 	enemyTypes[3] = "1111223355"
 	enemyTypes[4] = "1111223355"
@@ -539,6 +565,8 @@ DefaultProperties
 	mapZoom = 0.5;
 	spawnPoints = (X=-3824,Y=-3376,Z=-441.5368)
 	bMapPan = false;
+	bCamType = true;
 	camOffset = (X=-400, Y=300, z=500)
+	//camOffset = (X=-300, Y=100, z=500)
 	InputClass = class'G6PlayerInput'
 }

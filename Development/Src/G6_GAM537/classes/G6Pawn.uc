@@ -14,13 +14,34 @@ var UTWeapon preHeld;
 var bool bRespawning;
 var int deathTimer;
 
+simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
+{
+	Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
+
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+	{
+		if (VerifyBodyMaterialInstance())
+		{
+			BodyMaterialInstances[0].SetParent(HeadMaterial);
+			if (BodyMaterialInstances.length > 1)
+			{
+			   BodyMaterialInstances[1].SetParent(BodyMaterial);
+			}
+		}
+		else
+		{
+			`log("VerifyBodyMaterialInstance failed on pawn"@self);
+		}
+	}
+}
+
 simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out rotator out_CamRot, out float out_FOV )
 {
 	local G6PlayerController p;
 	local UTWeapon curHeld;
 	p = G6PlayerController (Controller);
 
-	if (p != None && p.Pawn != None) {
+	if (p != None && p.Pawn != None) {	
 		out_CamLoc = p.Pawn.Location + p.camOffset;
 		out_CamRot = rotator(normal(p.Pawn.Location - out_CamLoc));
 
@@ -131,4 +152,5 @@ DefaultProperties
 	Health = 400
 	HealthMax = 400
 	GroundSpeed = 800
+	Mass = 500;
 }
