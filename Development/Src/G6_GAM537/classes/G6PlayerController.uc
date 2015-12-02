@@ -56,6 +56,21 @@ var int skills[15];
 var string skillNames[15];
 var int skillRequirement[15];
 
+//Checkpoint Variables
+/*var int cpExp;
+var int cpLevel;
+var int cpSkPts;
+var int cpRoomExplored[16];
+var int cpRoomCleared[16];
+var int cpSkills[15];*/
+var vector spawnPoints;
+
+/* This really should be a 2D array, but UnrealScript, so this work around
+ * Each Room has its own possible combination of enemies, the probablity is set by this variable
+ */
+var String enemyTypes[16];
+var bool bAttemptRespawn;
+
 var vector camOffset;
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
@@ -135,7 +150,7 @@ exec function StopFire( optional byte FireModeNum )
 
 exec function SwitchWeapon(byte T)
 {
-	if(!bSkill) {
+	if(!bSkill && T >= 1 && T <= 4) {
 		currentWeapon = T;
 		super.SwitchWeapon(T);
 		curWeapon = UTWeapon (Pawn.Weapon);
@@ -197,6 +212,19 @@ exec function ToggleBattle()
 			ToggleMapDisplay();
 		 }
 	}
+}
+
+exec function AttemptRespawn()
+{
+	bAttemptRespawn = true;
+}
+
+exec function GoToCheckpoint()
+{
+	Pawn.Health++;
+	bBattleMode = false;
+	Pawn.SetLocation(spawnPoints);
+	IgnoreMoveInput(false);
 }
 
 exec function ToggleWUI() 
@@ -491,7 +519,25 @@ DefaultProperties
 	roomPoints[13] = 3
 	roomPoints[14] = 3
 	roomPoints[15] = 3
+	enemyTypes[0] = "0"
+	enemyTypes[1] = "0001112233"
+	//enemyTypes[1] = "1111112233"
+	enemyTypes[2] = "1111223355"
+	enemyTypes[3] = "1111223355"
+	enemyTypes[4] = "1111223355"
+	enemyTypes[5] = "1111223355"
+	enemyTypes[6] = "1111223355"
+	enemyTypes[7] = "1111223355"
+	enemyTypes[8] = "1111223355"
+	enemyTypes[9] = "1111223355"
+	enemyTypes[10] = "1111223355"
+	enemyTypes[11] = "1111223355"
+	enemyTypes[12] = "1111223355"
+	enemyTypes[13] = "1111223355"
+	enemyTypes[14] = "1111223355"
+	enemyTypes[15] = "1111223355"
 	mapZoom = 0.5;
+	spawnPoints = (X=-3824,Y=-3376,Z=-441.5368)
 	bMapPan = false;
 	camOffset = (X=-400, Y=300, z=500)
 	InputClass = class'G6PlayerInput'

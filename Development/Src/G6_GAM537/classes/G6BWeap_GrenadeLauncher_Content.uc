@@ -4,6 +4,7 @@ DefaultProperties
 {
 	AmmoCount=50
 	MaxAmmoCount=50
+	ShotCost[0]=0
 
 	GrenadeSpreadDist=50
 

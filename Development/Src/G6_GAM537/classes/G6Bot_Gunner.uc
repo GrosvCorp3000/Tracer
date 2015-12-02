@@ -3,6 +3,7 @@ class G6Bot_Gunner extends UTBot;
 var float AggroDistance;
 var float EscapeDistance;
 var float AttackDistance;
+var float approachDistance;
 var float PatrolPointReachedThreshold;
 var G6PatrolPath NextPatrolPoint;
 var G6Spawner MySpawner;
@@ -93,6 +94,12 @@ protected event ExecuteWhatToDoNext()
 
 function Possess(Pawn aPawn, bool bVehicleTransition)
 {
+	local int random;
+	random = Rand(5);
+	AttackDistance += random * 60;
+	AggroDistance += random * 80;
+	approachDistance += random * 50;
+
 	super.Possess(aPawn, bVehicleTransition);
 	if (NextPatrolPoint != None)
 		GotoState('FollowingPatrolPath', 'Begin');
@@ -135,7 +142,7 @@ Begin:
 		}
 		else
 		{
-			if (ActorReachable(Enemy))
+			if (ActorReachable(Enemy) && _dist > approachDistance)
 			{
 				MoveToward(Enemy);
 			}
@@ -152,7 +159,8 @@ Begin:
 DefaultProperties
 {
 	PatrolPointReachedThreshold=50
-	AggroDistance=800
+	AggroDistance=600
 	EscapeDistance=1500
-	AttackDistance=600
+	AttackDistance=380
+	approachDistance=150;
 }

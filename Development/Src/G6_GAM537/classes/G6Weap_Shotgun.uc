@@ -8,51 +8,51 @@ simulated function vector InstantFireStartTrace()
 simulated function Array<vector> InstantFireEndTraceA(Array<vector> StartTrace)
 {
 	local Array<vector> EndTrace;
-	local color myColor;
+	//local color myColor;
 	local G6PlayerController p;
 	local rotator tRotator;
 	
 	p = G6PlayerController (Instigator.Controller);
 
 	EndTrace[0] = StartTrace[0] + vector(GetAdjustedAim(StartTrace[0])) * GetTraceRange();
-	myColor.R = 255;
-	myColor.A = 255;
+	//myColor.R = 255;
+	//myColor.A = 255;
 	if (p != None)
-		p.myHUD.Draw3DLine(StartTrace[0], EndTrace[0], myColor);
+		//p.myHUD.Draw3DLine(StartTrace[0], EndTrace[0], myColor);
 
 	tRotator = GetAdjustedAim(StartTrace[1]);
 	tRotator.Yaw = tRotator.Yaw + 2500;
 	EndTrace[1] = StartTrace[1] + vector(tRotator) * GetTraceRange();
-	myColor.B = 255;
-	myColor.A = 255;
+	//myColor.B = 255;
+	//myColor.A = 255;
 	if (p != None)
-		p.myHUD.Draw3DLine(StartTrace[1], EndTrace[1], myColor);
+		//p.myHUD.Draw3DLine(StartTrace[1], EndTrace[1], myColor);
 
 	tRotator.Yaw = tRotator.Yaw - 5000;
 	EndTrace[2] = StartTrace[2] + vector(tRotator) * GetTraceRange();
-	myColor.G = 255;
-	myColor.A = 255;
+	//myColor.G = 255;
+	//myColor.A = 255;
 	if (p != None)
-		p.myHUD.Draw3DLine(StartTrace[2], EndTrace[2], myColor);
+		//p.myHUD.Draw3DLine(StartTrace[2], EndTrace[2], myColor);
 
 	if (StartTrace.Length > 3)
 	{
 		tRotator = GetAdjustedAim(StartTrace[0]);
 		tRotator.Yaw = tRotator.Yaw + 5000;
 		EndTrace[3] = StartTrace[3] + vector(tRotator) * GetTraceRange();
-		myColor.B = 255;
-		myColor.R = 255;
-		myColor.A = 255;
+		//myColor.B = 255;
+		//myColor.R = 255;
+		//myColor.A = 255;
 		if (p != None)
-			p.myHUD.Draw3DLine(StartTrace[3], EndTrace[3], myColor);
+			//p.myHUD.Draw3DLine(StartTrace[3], EndTrace[3], myColor);
 
 		tRotator.Yaw = tRotator.Yaw - 10000;
 		EndTrace[4] = StartTrace[4] + vector(tRotator) * GetTraceRange();
-		myColor.R = 255;
-		myColor.G = 255;
-		myColor.A = 255;
+		//myColor.R = 255;
+		//myColor.G = 255;
+		//myColor.A = 255;
 		if (p != None)
-			p.myHUD.Draw3DLine(StartTrace[4], EndTrace[4], myColor);
+			//p.myHUD.Draw3DLine(StartTrace[4], EndTrace[4], myColor);
 	}
 
 	return EndTrace;
@@ -130,19 +130,21 @@ DefaultProperties
 {
 	WeaponFireTypes[0] = EWFT_InstantHit
 	FireInterval[0] = 0.8
-	ShotCost[0] = 1
+	ShotCost[0] = 3
 	WeaponFireAnim[0]=WeaponFire
 	InstantHitDamage[0]=35
 	InstantHitMomentum[0]=80000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
+	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
 
 	WeaponFireTypes[1] = EWFT_InstantHit
 	FireInterval[1] = 0.8
-	ShotCost[1] = 1
+	ShotCost[1] = 3
 	WeaponFireAnim[1]=WeaponFire
 	InstantHitDamage[1]=35
 	InstantHitMomentum[1]=80000
 	InstantHitDamageTypes[1]=class'UTDmgType_CicadaLaser'
+	WeaponFireSnd[1]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
 
 	AttachmentClass=class'G6Attachment_Shotgun'
 

@@ -35,6 +35,8 @@ function DrawHUD()
 	local Vector2D TextSize;
 	local G6PlayerController p;
 	local G6PlayerInput p_input;
+	local int playerHealth;
+	local int playerHealthMax;
 	local float HealthPercent;
 	local float EnergyPercent;
 	local int mapRoom;
@@ -58,10 +60,10 @@ function DrawHUD()
 
 	p = G6PlayerController (PlayerOwner);
 	p_input = G6PlayerInput (p.PlayerInput);
-	HealthPercent = p.Pawn.Health / float(p.Pawn.HealthMax);
+	playerHealth = p.Pawn.Health - 100;
+	playerHealthMax = p.Pawn.HealthMax - 100;
+	HealthPercent = playerHealth / float(playerHealthMax);
 	EnergyPercent = p.cEnergy / float(p.cEnergyMax);
-
-	p.bBehindView = true;
 
 	super.DrawHUD();
 
@@ -83,8 +85,7 @@ function DrawHUD()
 		Canvas.DrawText("Player Speed: "$p.Pawn.GroundSpeed);
 
 		Canvas.DrawText("Battle Mode: "$p.bBattleMode);
-		Canvas.DrawText("Skill: "$p.bSkill);
-		Canvas.DrawText("Map: "$p.bMap);
+		Canvas.DrawText("bBehindView: "$p.bBehindView);
 
 		Canvas.DrawText("CurrentRoom: "$p.roomName[p.curRoom]);
 		Canvas.DrawText("Room Trigger: "$p.roomExplored[p.curRoom]);
@@ -97,7 +98,7 @@ function DrawHUD()
 		Canvas.DrawText("Weapon Max Ammo: "$cur_weap.MaxAmmoCount);
 	}
 
-	//Determine the location via a very slow and manual way
+	//Determine the location
 	PawnLocation = p.Pawn.Location;
 	inRoom = false;
 	for(mapRoom = 0; mapRoom < 16; mapRoom++){
@@ -139,7 +140,7 @@ function DrawHUD()
 		}
 	}
 
-	if(p.Pawn.Health > 0){
+	if(playerHealth > 0){
 
 		//Player unit health bar and energy bar
 		if (p.unitHE == 0 || p.unitHE == 2) {
@@ -206,9 +207,9 @@ function DrawHUD()
 			Canvas.Font = PlayerFont;
 			Canvas.SetDrawColorStruct(WhiteColor);
 			//Health Number
-			Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
-			Canvas.SetPos(100 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.Pawn.Health/100),0,1) * 10) - (Clamp(1-FCeil(p.Pawn.Health/10),0,1) * 10),SizeY-95);
-			Canvas.DrawText(p.Pawn.Health,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
+			Canvas.TextSize(playerHealth, TextSize.X, TextSize.Y);
+			Canvas.SetPos(100 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(playerHealth/100),0,1) * 10) - (Clamp(1-FCeil(playerHealth/10),0,1) * 10),SizeY-95);
+			Canvas.DrawText(playerHealth,,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 			//Energy Number
 			Canvas.TextSize(p.cEnergy, TextSize.X, TextSize.Y);
 			Canvas.SetPos(100 - (TextSize.X * PlayerNameScale / RatioX) + 100 - (Clamp(1-FCeil(p.cEnergy/100),0,1) * 10) - (Clamp(1-FCeil(p.cEnergy/10),0,1) * 10),SizeY-43);
@@ -226,7 +227,7 @@ function DrawHUD()
 	}else{
 		Canvas.Font = PlayerFont;
 		Canvas.SetDrawColorStruct(WhiteColor);
-		Canvas.TextSize(p.Pawn.Health, TextSize.X, TextSize.Y);
+		Canvas.TextSize(playerHealth, TextSize.X, TextSize.Y);
 		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
 		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
 	}

@@ -10,18 +10,6 @@ defaultproperties
 	FireInterval(1)=+1.05
 	PlayerViewOffset=(X=0.0,Y=0.0,Z=0.0)
 
-	Begin Object Name=FirstPersonMesh
-		SkeletalMesh=SkeletalMesh'WP_RocketLauncher.Mesh.SK_WP_RocketLauncher_1P'
-		PhysicsAsset=None
-		AnimTreeTemplate=AnimTree'WP_RocketLauncher.Anims.AT_WP_RocketLauncher_1P_Base'
-		AnimSets(0)=AnimSet'WP_RocketLauncher.Anims.K_WP_RocketLauncher_1P_Base'
-		Translation=(X=0,Y=0,Z=0)
-		Rotation=(Yaw=0)
-		scale=1.0
-		FOV=60.0
-		bUpdateSkelWhenNotRendered=true
-	End Object
-	SkeletonFirstPersonMesh = FirstPersonMesh;
 	AttachmentClass=class'UTGameContent.UTAttachment_RocketLauncher'
 
 	// Pickup staticmesh
@@ -63,12 +51,13 @@ defaultproperties
 	ShouldFireOnRelease(1)=1
 	InventoryGroup=4
 	GroupWeight=0.5
+	ShotCost[0]=5
 
 	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Rocket_Cue'
 
-	AmmoCount=20
+	AmmoCount=100
 	LockerAmmoCount=18
-	MaxAmmoCount=30
+	MaxAmmoCount=100
 
 	SeekingRocketClass=class'UTProj_SeekingRocket'
 

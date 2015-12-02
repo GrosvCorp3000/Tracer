@@ -6,6 +6,7 @@ var(Spawner) int BotsToSpawn;
 var(Spawner) float SpawnInterval;
 
 var bool bSpawn;
+var String enemySelect;
 
 
 function PostBeginPlay()
@@ -33,15 +34,27 @@ function UTBot SpawnBot()
 	local Pawn NewPawn;
 	local rotator StartRotation;
 	local int random;
+	local int selected;
 
 	random = Rand(10);
 
-	if (random < 3)
-		NewBot = Spawn(class'G6Bot_Gunner');
-	else if (random < 6)
-		NewBot = Spawn(class'G6Bot_Grenadier');
-	else
-		NewBot = Spawn(class'G6Bot_Melee');
+	selected = Int (Mid(enemySelect, random, 1));
+
+	switch (selected)
+	{
+		case 1:
+			NewBot = Spawn(class'G6Bot_Gunner');
+			break;
+		case 2:
+			NewBot = Spawn(class'G6Bot_Grenadier');
+			break;
+		case 3:
+			NewBot = Spawn(class'G6Bot_ShockBaller');
+			break;
+		default:
+			NewBot = Spawn(class'G6Bot_Melee');
+			break;
+	}
 
 	if (NewBot == None)
 	{
@@ -68,20 +81,24 @@ function UTBot SpawnBot()
 	WorldInfo.Game.AddDefaultInventory(NewPawn);
 	WorldInfo.Game.SetPlayerDefaults(NewPawn);
 
-	if (random < 3)
+	switch (selected)
 	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_MachineGun');
-		G6Bot_Gunner (NewBot).EnterPatrolPath(self);
-	}
-	else if (random < 6) 
-	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_GrenadeLauncher_Content');
-		G6Bot_Grenadier (NewBot).EnterPatrolPath(self);
-	}
-	else
-	{
-		NewPawn.InvManager.CreateInventory(class'G6BWeap_Sword');
-		G6Bot_Melee (NewBot).EnterPatrolPath(self);
+		case 1:
+			NewPawn.InvManager.CreateInventory(class'G6BWeap_MachineGun');
+			G6Bot_Gunner (NewBot).EnterPatrolPath(self);
+			break;
+		case 2:
+			NewPawn.InvManager.CreateInventory(class'G6BWeap_GrenadeLauncher_Content');
+			G6Bot_Grenadier (NewBot).EnterPatrolPath(self);
+			break;
+		case 3:
+			NewPawn.InvManager.CreateInventory(class'G6BWeap_ShockBall');
+			G6Bot_ShockBaller (NewBot).EnterPatrolPath(self);
+			break;
+		default:
+			NewPawn.InvManager.CreateInventory(class'G6BWeap_Sword');
+			G6Bot_Melee (NewBot).EnterPatrolPath(self);
+			break;
 	}
 
 	return NewBot;

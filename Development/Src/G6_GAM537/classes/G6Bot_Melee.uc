@@ -63,7 +63,7 @@ function bool IsPawnTouchingActor(Actor other)
 
 protected event ExecuteWhatToDoNext()
 {
-	local PlayerController pc;
+	//local PlayerController pc;
 
 	if (Pawn == None)
 	{

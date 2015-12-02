@@ -27,7 +27,8 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vecto
 					S.Location.Y < pc.roomLoc2[pc.curRoom].Y)
 				{
 				//`Log("Trying to trigger ... "$S);
-				S.bSpawn = True;
+					S.bSpawn = True;
+					S.enemySelect = pc.enemyTypes[pc.curRoom];
 				}
 			}
 			pc.bBattleMode = True;

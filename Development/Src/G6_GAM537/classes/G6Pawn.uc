@@ -10,6 +10,10 @@ class G6Pawn extends UTPawn;
  *
  * @return	true if Pawn should provide the camera point of view.
  */
+var UTWeapon preHeld;
+var bool bRespawning;
+var int deathTimer;
+
 simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out rotator out_CamRot, out float out_FOV )
 {
 	local G6PlayerController p;
@@ -27,9 +31,9 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 		}
 
 		if(p.skills[1] == 1){
-			HealthMax = 500;
+			HealthMax = 600;
 		}else if(p.skills[0] == 1){
-			HealthMax = 400;
+			HealthMax = 500;
 		}
 	
 		if(p.skills[6] == 1){
@@ -55,11 +59,21 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 				InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
 			}
 		}
-
+		
 		curHeld = UTWeapon (Weapon);
 		curHeld.MaxAmmoCount = p.cEnergyMax;
+		if(curHeld != preHeld){
+			curHeld.AmmoCount = p.cEnergy;
+			p.StopFire();
+		}else if(p.bBattleMode){
+			p.cEnergy = curHeld.AmmoCount;
+		}else{
+			curHeld.AmmoCount = p.cEnergy;
+		}
 
-		if (!p.bBattleMode) {
+		preHeld = curHeld;
+
+		if(!p.bBattleMode){
 			if(Health < HealthMax){
 				Health++;
 			}
@@ -67,6 +81,26 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 				p.cEnergy++;
 			}
 		}
+		if(Health <= 100){
+			Health = 100;
+			if(!IsInState('FeigningDeath')){
+				FeignDeath();
+				p.IgnoreMoveInput(true);
+				deathTimer = 0;
+			}
+			deathTimer++;
+			if(p.bAttemptRespawn && deathTimer > 250){
+				p.Pawn.SetHidden(true);
+				p.GoToCheckpoint();
+				bRespawning = true;
+			}
+		}
+		if(bRespawning && Health == HealthMax){
+			p.Pawn.SetHidden(false);
+			bRespawning = false;
+			PlayTeleportEffect(true, true);
+		}
+		p.bAttemptRespawn = false;
 	}
 	return true;
 }
@@ -80,20 +114,21 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	if (PC != None)
 	{
 		InvManager.CreateInventory(class'G6Weap_Pistol');
+		//InvManager.CreateInventory(class'G6BWeap_ShockBall');
 		//InvManager.CreateInventory(class'G6Weap_Laser');
 		//InvManager.CreateInventory(class'G6Weap_Shotgun');
 		//InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
+		//InvManager.CreateInventory(class'UTWeap_ShockRifle');
 
 		//Why doesn't this work?
 		PC.SwitchWeapon(1);
-		//InvManager.CreateInventory(class'UTWeap_ShockRifle');
+		
 	}
 }
 
 DefaultProperties
 {
-	Health = 300
-	HealthMax = 300
+	Health = 400
+	HealthMax = 400
 	GroundSpeed = 800
-	
 }
