@@ -1,9 +1,10 @@
-class G6Bot_Gunner extends UTBot;
+class G6Bot_Sniper extends UTBot;
 
 var float AggroDistance;
 var float EscapeDistance;
 var float AttackDistance;
 var float approachDistance;
+var float RetreatDistance;
 var float PatrolPointReachedThreshold;
 var G6PatrolPath NextPatrolPoint;
 var G6Spawner MySpawner;
@@ -159,8 +160,9 @@ Begin:
 DefaultProperties
 {
 	PatrolPointReachedThreshold=50
-	AggroDistance=600
-	EscapeDistance=1500
-	AttackDistance=380
+	AggroDistance=1200
+	EscapeDistance=1700
+	AttackDistance=800
 	approachDistance=100;
+	RetreatDistance=200;
 }

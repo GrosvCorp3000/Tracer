@@ -51,6 +51,9 @@ function UTBot SpawnBot()
 		case 3:
 			NewBot = Spawn(class'G6Bot_ShockBaller');
 			break;
+		case 4:
+			NewBot = Spawn(class'G6Bot_Sniper');
+			break;
 		default:
 			NewBot = Spawn(class'G6Bot_Melee');
 			break;
@@ -65,7 +68,25 @@ function UTBot SpawnBot()
 	StartRotation = Rotation;
 	StartRotation.Yaw = Rotation.Yaw;
 
-	NewPawn = Spawn(class'UTPawn',,,Location,StartRotation);
+	switch (selected)
+	{
+		case 1:
+			NewPawn = Spawn(class'UTPawn',,,Location,StartRotation);
+			break;
+		case 2:
+			NewPawn = Spawn(class'UTPawn',,,Location,StartRotation);
+			break;
+		case 3:
+			NewPawn = Spawn(class'UTPawn',,,Location,StartRotation);
+			break;
+		case 4:
+			NewPawn = Spawn(class'G6BPawn_Sniper',,,Location,StartRotation);
+			break;
+		default:
+			NewPawn = Spawn(class'UTPawn',,,Location,StartRotation);
+			break;
+	}
+
 	if ( NewPawn == None )
 	{
 		`log("Couldn't spawn "$class'UTPawn'$" at "$self);
@@ -94,6 +115,10 @@ function UTBot SpawnBot()
 		case 3:
 			NewPawn.InvManager.CreateInventory(class'G6BWeap_ShockBall');
 			G6Bot_ShockBaller (NewBot).EnterPatrolPath(self);
+			break;
+		case 4:
+			NewPawn.InvManager.CreateInventory(class'G6BWeap_Rifle');
+			G6Bot_Sniper (NewBot).EnterPatrolPath(self);
 			break;
 		default:
 			NewPawn.InvManager.CreateInventory(class'G6BWeap_Sword');

@@ -9,5 +9,6 @@ DefaultProperties
 	WeaponFireTypes(1)=EWFT_Projectile
 	WeaponProjectiles(1)=class'G6BProj_ShockBall'
 	ShotCost[0] = 0
+	ShotCost[1] = 0
 	bCanThrow = False
 }

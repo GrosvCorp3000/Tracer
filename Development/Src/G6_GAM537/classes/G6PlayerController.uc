@@ -520,8 +520,8 @@ DefaultProperties
 	roomPoints[14] = 3
 	roomPoints[15] = 3
 	enemyTypes[0] = "0"
-	enemyTypes[1] = "0001112233"
-	//enemyTypes[1] = "1111112233"
+	//enemyTypes[1] = "0001112233"
+	enemyTypes[1] = "1122444444"
 	enemyTypes[2] = "1111223355"
 	enemyTypes[3] = "1111223355"
 	enemyTypes[4] = "1111223355"
