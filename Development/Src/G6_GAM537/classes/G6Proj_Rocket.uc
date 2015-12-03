@@ -17,10 +17,10 @@ defaultproperties
 	ExplosionDecal=MaterialInstanceTimeVarying'WP_RocketLauncher.Decals.MITV_WP_RocketLauncher_Impact_Decal01'
 	DecalWidth=128.0
 	DecalHeight=128.0
-	speed=2200.0
-	MaxSpeed=3200.0
-	Damage=120.0
-	DamageRadius=300.0
+	speed=2500.0
+	MaxSpeed=5000.0
+	Damage=130.0
+	DamageRadius=320.0
 	MomentumTransfer=85000
 	MyDamageType=class'UTDmgType_Rocket'
 	LifeSpan=8.0

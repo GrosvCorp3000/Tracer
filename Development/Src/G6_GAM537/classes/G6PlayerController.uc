@@ -7,6 +7,8 @@ var bool bWUI;
 var bool bBattleMode;
 var bool bSkill;
 var bool bMap;
+var bool bCamType;
+var bool bSkinType;
 
 //Character attributes
 var int cEnergy;
@@ -72,7 +74,7 @@ var String enemyTypes[16];
 var bool bAttemptRespawn;
 
 var vector camOffset;
-var bool bCamType;
+
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
 function Rotator GetAdjustedAimFor( Weapon W, vector StartFireLoc )
@@ -232,6 +234,13 @@ exec function ToggleWUI()
 {
 	if (Pawn != none) {
 		bWUI = !bWUI;
+	}
+}
+
+exec function ToggleSkin() 
+{
+	if (Pawn != none) {
+		bSkinType = !bSkinType;
 	}
 }
 
@@ -562,11 +571,12 @@ DefaultProperties
 	enemyTypes[13] = "1111223355"
 	enemyTypes[14] = "1111223355"
 	enemyTypes[15] = "1111223355"
-	mapZoom = 0.5;
+	mapZoom = 0.5
 	spawnPoints = (X=-3824,Y=-3376,Z=-441.5368)
-	bMapPan = false;
-	bCamType = true;
+	bMapPan = false
+	bCamType = true
 	camOffset = (X=-400, Y=300, z=500)
 	//camOffset = (X=-300, Y=100, z=500)
 	InputClass = class'G6PlayerInput'
+	bSkinType = true
 }

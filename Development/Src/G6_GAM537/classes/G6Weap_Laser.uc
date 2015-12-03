@@ -1248,7 +1248,7 @@ defaultproperties
 	LinkBreakDelay=0.5		// link will stay established for this long extra when blocked (so you don't have to worry about every last tree getting in the way)
 	WeaponLinkDistance=160.0
 
-	InstantHitDamage(1)=100
+	InstantHitDamage(1)=150
 	InstantHitDamageTypes(1)=class'UTDmgType_LinkBeam'
 
 	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Link_Cue'

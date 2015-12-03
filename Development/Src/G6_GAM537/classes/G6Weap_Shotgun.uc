@@ -132,7 +132,7 @@ DefaultProperties
 	FireInterval[0] = 0.8
 	ShotCost[0] = 3
 	WeaponFireAnim[0]=WeaponFire
-	InstantHitDamage[0]=35
+	InstantHitDamage[0]=50
 	InstantHitMomentum[0]=80000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
@@ -141,7 +141,7 @@ DefaultProperties
 	FireInterval[1] = 0.8
 	ShotCost[1] = 3
 	WeaponFireAnim[1]=WeaponFire
-	InstantHitDamage[1]=35
+	InstantHitDamage[1]=50
 	InstantHitMomentum[1]=80000
 	InstantHitDamageTypes[1]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[1]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
@@ -153,5 +153,5 @@ DefaultProperties
 	AmmoCount = 100
 	MaxAmmoCount = 200
 
-	WeaponRange = 300
+	WeaponRange = 350
 }

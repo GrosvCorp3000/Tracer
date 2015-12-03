@@ -71,13 +71,13 @@ function UTBot SpawnBot()
 	switch (selected)
 	{
 		case 1:
-			NewPawn = Spawn(class'G6BPawn',,,Location,StartRotation);
+			NewPawn = Spawn(class'G6BPawn_Gunner',,,Location,StartRotation);
 			break;
 		case 2:
-			NewPawn = Spawn(class'G6BPawn',,,Location,StartRotation);
+			NewPawn = Spawn(class'G6BPawn_Grenadier',,,Location,StartRotation);
 			break;
 		case 3:
-			NewPawn = Spawn(class'G6BPawn',,,Location,StartRotation);
+			NewPawn = Spawn(class'G6BPawn_ShockBaller',,,Location,StartRotation);
 			break;
 		case 4:
 			NewPawn = Spawn(class'G6BPawn_Sniper',,,Location,StartRotation);

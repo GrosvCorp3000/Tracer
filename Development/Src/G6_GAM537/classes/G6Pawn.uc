@@ -16,7 +16,14 @@ var int deathTimer;
 
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
-	Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
+	local G6PlayerController p;
+	p = G6PlayerController (Controller);
+
+	if (p != None && p.bSkinType)
+		Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
+		//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard');
+	else
+		Mesh.SetSkeletalMesh(SkeletalMesh'CH_LIAM_Cathode.Mesh.SK_CH_LIAM_Cathode');
 
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
@@ -149,8 +156,50 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 
 DefaultProperties
 {
+	Begin Object Class=SpotLightComponent Name=MyFlashLight
+		Brightness=20.0
+		LightColor=(R=255,G=255,B=255)
+		Radius=768.0
+		InnerConeAngle=0
+		OuterConeAngle=22
+		LightShaftConeAngle=55
+		bEnabled=TRUE
+
+		// for now we are leaving this as people may be depending on it in script and we just
+		// set the specific default settings in each light as they are all pretty different
+		CastShadows=FALSE
+		CastStaticShadows=FALSE
+		CastDynamicShadows=FALSE
+		bCastCompositeShadow=FALSE
+		bAffectCompositeShadowDirection=FALSE
+		bForceDynamicLight=FALSE
+		UseDirectLightMap=FALSE
+		bPrecomputedLightingIsValid=TRUE
+	End Object
+	Components.Add(MyFlashLight)
+
+	Begin Object Class=PointLightComponent Name=MyLight
+		Brightness=8.0
+		LightColor=(R=255,G=255,B=255)
+		Radius=70.0
+		bEnabled=TRUE
+
+		// for now we are leaving this as people may be depending on it in script and we just
+		// set the specific default settings in each light as they are all pretty different
+		CastShadows=FALSE
+		CastStaticShadows=FALSE
+		CastDynamicShadows=FALSE
+		bCastCompositeShadow=FALSE
+		bAffectCompositeShadowDirection=FALSE
+		bForceDynamicLight=FALSE
+		UseDirectLightMap=FALSE
+		bPrecomputedLightingIsValid=TRUE
+	End Object
+	Components.Add(MyLight)
+
+
 	Health = 400
 	HealthMax = 400
 	GroundSpeed = 800
-	Mass = 500;
+	Mass = 500
 }
