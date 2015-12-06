@@ -493,7 +493,6 @@ state CurrentlyAttached
 	}
 }
 
-
 defaultproperties
 {
 	// Weapon SkeletalMesh

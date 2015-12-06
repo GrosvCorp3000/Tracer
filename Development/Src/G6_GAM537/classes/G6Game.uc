@@ -7,7 +7,9 @@ function RestartPlayer(Controller aPlayer)
 	if (UTBot(aPlayer) != None && aPlayer.IsInState('Dead'))
 	{
 		foreach AllActors( class'G6PlayerController', P ) {
-			P.roomSpawns[P.curRoom]--;
+			if(!P.bRespawning){
+				P.roomCurKill++;
+			}
 		}
 		aPlayer.Destroy();
 	}
@@ -33,4 +35,6 @@ DefaultProperties
 	DefaultPawnClass = class'G6Pawn' 
 	//DefaultInventory(0)=class'G6Weap_Pistol'
 	DefaultInventory(0) = None
+	
+	MaxPlayersAllowed=500
 }

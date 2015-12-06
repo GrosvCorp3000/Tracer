@@ -16,6 +16,7 @@ function Possess(Pawn aPawn, bool bVehicleTransition)
 
 DefaultProperties
 {
+	StrafingAbility=1
 	PatrolPointReachedThreshold=50
 	AggroDistance=600
 	EscapeDistance=1500

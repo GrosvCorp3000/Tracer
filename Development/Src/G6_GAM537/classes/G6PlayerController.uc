@@ -13,8 +13,6 @@ var bool bSkinType;
 //Character attributes
 var int cEnergy;
 var int cEnergyMax;
-var int cExp;
-var int cLevel;
 var int cSkPts;
 
 var int currentWeapon;
@@ -22,16 +20,22 @@ var UTWeapon curWeapon;
 
 //Map Variables
 var int curRoom;
-var intPoint roomLoc[16];
-var intPoint roomLoc2[16];
-var String roomName[16];
+var intPoint roomLoc[17];
+var intPoint roomLoc2[17];
+var intPoint hallLoc[19];
+var intPoint hallLoc2[19];
+var int hallExplored[19];
+var String roomName[17];
 //Player has entered room, currently in battle status
-var int roomExplored[16];
+var int roomExplored[17];
 //All enemies in room are dead, room cleared
-var int roomCleared[16];
-//Number of enemies left to kill
-var int roomSpawns[16];
-var int roomPoints[16];
+var int roomCleared[17];
+//Number of enemies Needed to kill
+var int roomSpawns[17];
+//Kills in the current Room
+var int roomCurKill;
+var int roomPerSpawn[17];
+var int roomPoints[17];
 var float mapZooming;
 var float mapZoom;
 var bool bMapPan;
@@ -59,22 +63,26 @@ var string skillNames[15];
 var int skillRequirement[15];
 
 //Checkpoint Variables
-/*var int cpExp;
+var int cpExp;
 var int cpLevel;
 var int cpSkPts;
-var int cpRoomExplored[16];
-var int cpRoomCleared[16];
-var int cpSkills[15];*/
-var vector spawnPoints;
+var int cpSkills[15];
+var int cpHallExplored[19];
+var int cpRoomExplored[17];
+var int cpRoomCleared[17];
+var int cpRoomSpawns[17];
+
+var int lastCheckPoint;
+var vector spawnPoints[19];
+var bool bRespawning;
+//var bool bAttemptRespawn;
 
 /* This really should be a 2D array, but UnrealScript, so this work around
  * Each Room has its own possible combination of enemies, the probablity is set by this variable
  */
-var String enemyTypes[16];
-var bool bAttemptRespawn;
+var String enemyTypes[17];
 
 var vector camOffset;
-
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
 function Rotator GetAdjustedAimFor( Weapon W, vector StartFireLoc )
@@ -217,17 +225,103 @@ exec function ToggleBattle()
 	}
 }
 
+exec function KillAllEnemies()
+{
+	local G6BPawn enemyPawn;
+	foreach AllActors(class'G6BPawn', enemyPawn){
+		enemyPawn.Suicide();
+	}
+}
+
 exec function AttemptRespawn()
 {
-	bAttemptRespawn = true;
+	local G6Pawn p;
+	local G6Spawner S;
+	p = G6Pawn (Pawn);
+
+	if(!p.IsInState('FeigningDeath')){
+		p.FeignDeath();
+		IgnoreMoveInput(true);
+	}
+	foreach AllActors( class'G6Spawner', S )
+	{
+		S.bSpawn = False;
+	}
+	bRespawning=True;
+	KillAllEnemies();
+	Pawn.SetHidden(true);
+	SetTimer(3, true, nameof(Respawn));
+}
+
+function Respawn()
+{
+	local Trigger T;
+
+	if (bRespawning) 
+	{
+		roomExplored[curRoom] = 0;
+		GoToCheckpoint();
+		KillAllEnemies();
+		IgnoreMoveInput(false);
+		Pawn.SetHidden(false);
+		PlayTeleportEffect(true, true);
+		SwitchWeapon(1);	
+		bBattleMode = False;
+		foreach AllActors( class'Trigger', T )
+		{
+			T.SetCollision(True);
+		}
+		bRespawning = False;
+		roomCurKill = 0;
+		
+	}
+	SetTimer(0, true, nameof(Respawn));
+}
+
+exec function CheckPointSave()
+{
+	local int counter;
+
+	cpSkPts = cSkPts;
+	for(counter = 0; counter < 15; counter++){
+		cpSkills[counter] = skills[counter];
+	}
+	for(counter = 0; counter < 17; counter++){
+		cpRoomExplored[counter] = roomExplored[counter];
+		cpRoomCleared[counter] = roomCleared[counter];
+		cpRoomSpawns[counter] = roomSpawns[counter];
+	}
+	for(counter = 0; counter < 19; counter++){
+		cpHallExplored[counter] = hallExplored[counter];
+	}
 }
 
 exec function GoToCheckpoint()
-{
+{	
+	CheckPointLoad();
+
 	Pawn.Health++;
 	bBattleMode = false;
-	Pawn.SetLocation(spawnPoints);
+	Pawn.SetLocation(spawnPoints[lastCheckPoint]);
 	IgnoreMoveInput(false);
+}
+
+exec function CheckPointLoad()
+{
+	local int counter;
+
+	cSkPts = cpSkPts;
+	for(counter = 0; counter < 15; counter++){
+		skills[counter] = cpSkills[counter];
+	}
+	for(counter = 0; counter < 17; counter++){
+		roomExplored[counter] = cpRoomExplored[counter];
+		roomCleared[counter] = cpRoomCleared[counter];
+		roomSpawns[counter] = cpRoomSpawns[counter];
+	}
+	for(counter = 0; counter < 19; counter++){
+		hallExplored[counter] = cpHallExplored[counter];
+	}
 }
 
 exec function ToggleWUI() 
@@ -376,7 +470,6 @@ ignores SeePlayer, HearNoise, Bump;
 
 DefaultProperties
 {
-	cLevel = 1
 	cSkPts = 10
 	skills[0] = 0
 	skills[1] = 0
@@ -433,38 +526,80 @@ DefaultProperties
 	bBehindView = true
 	currentWeapon = 1
 	curRoom = 0
-	roomLoc[0] = (X=-3327, Y=-3583)
-	roomLoc2[0] = (X=-5375, Y=-2559)
-	roomLoc[1] = (X=-5887, Y=-3711)
-	roomLoc2[1] = (X=-7935, Y=-1663)
-	roomLoc[2] = (X=-5887, Y=-1407)
-	roomLoc2[2] = (X=-7935, Y=-639)
-	roomLoc[3] = (X=-6015, Y=-225)
-	roomLoc2[3] = (X=-7679, Y=768)
-	roomLoc[4] = (X=-5119, Y=1024)
-	roomLoc2[4] = (X=-7935, Y=3840)
-	roomLoc[5] = (X=-3455, Y=-2303)
-	roomLoc2[5] = (X=-5503, Y=-895) 
-	roomLoc[6] = (X=-2815, Y=-767)
-	roomLoc2[6] = (X=-4863, Y=1280)
-	roomLoc[7] = (X=-255, Y=-3711)
-	roomLoc2[7] = (X=-2815, Y=-639)
-	roomLoc[8] = (X=-511, Y=0)
-	roomLoc2[8] = (X=-2815, Y=512)
-	roomLoc[9] = (X=-1535, Y=1664)
-	roomLoc2[9] = (X=-4607, Y=3712)
-	roomLoc[10] = (X=3200, Y=-3711)
-	roomLoc2[10] = (X=128, Y=-895)
-	roomLoc[11] = (X=2668, Y=-639)
-	roomLoc2[11] = (X=-511, Y=1152)
-	roomLoc[12] = (X=2560, Y=1536)
-	roomLoc2[12] = (X=-511, Y=3584)
-	roomLoc[13] = (X=6144, Y=-3711)
-	roomLoc2[13] = (X=3584, Y=-2175)
-	roomLoc[14] = (X=6016, Y=2688)
-	roomLoc2[14] = (X=3200, Y=3712)
-	roomLoc[15] = (X=7424, Y=-1791)
-	roomLoc2[15] = (X=3328, Y=2304)
+	roomLoc[0]   =  (X=-3327, Y=-3583)
+	roomLoc2[0]  =  (X=-5375, Y=-2559)
+	roomLoc[1]   =  (X=-5887, Y=-3711)
+	roomLoc2[1]  =  (X=-7935, Y=-1663)
+	roomLoc[2]   =  (X=-5887, Y=-1407)
+	roomLoc2[2]  =  (X=-7935, Y=-639)
+	roomLoc[3]   =  (X=-6015, Y=-225)
+	roomLoc2[3]  =  (X=-7679, Y=768)
+	roomLoc[4]   =  (X=-5119, Y=1024)
+	roomLoc2[4]  =  (X=-7935, Y=3840)
+	roomLoc[5]   =  (X=-3455, Y=-2303)
+	roomLoc2[5]  =  (X=-5503, Y=-895) 
+	roomLoc[6]   =  (X=-2815, Y=-767)
+	roomLoc2[6]  =  (X=-4863, Y=1280)
+	roomLoc[7]   =  (X=-255, Y=-3711)
+	roomLoc2[7]  =  (X=-2815, Y=-639)
+	roomLoc[8]   =  (X=-511, Y=0)
+	roomLoc2[8]  =  (X=-2815, Y=512)
+	roomLoc[9]   =  (X=-1535, Y=1664)
+	roomLoc2[9]  =  (X=-4607, Y=3712)
+	roomLoc[10]  =  (X=3200, Y=-3711)
+	roomLoc2[10] =  (X=128, Y=-895)
+	roomLoc[11]  =  (X=2668, Y=-639)
+	roomLoc2[11] =  (X=-511, Y=1152)
+	roomLoc[12]  =  (X=2560, Y=1536)
+	roomLoc2[12] =  (X=-511, Y=3584)
+	roomLoc[13]  =  (X=6144, Y=-3711)
+	roomLoc2[13] =  (X=3584, Y=-2175)
+	roomLoc[14]  =  (X=6016, Y=2688)
+	roomLoc2[14] =  (X=3200, Y=3712)
+	roomLoc[15]  =  (X=7424, Y=-1791)
+	roomLoc2[15] =  (X=3328, Y=2304)
+	roomLoc[16]  =  (X=-1535, Y=896)
+	roomLoc2[16] =  (X=-2559, Y=1408)
+	hallLoc[0]   =  (X=-5375, Y=-3199)
+	hallLoc2[0]  =  (X=-5887, Y=-2943)
+	hallLoc[1]   =  (X=-5503, Y=-2175)
+	hallLoc2[1]  =  (X=-5887, Y=-1919)
+	hallLoc[2]   =  (X=-6015, Y=-1663)
+	hallLoc2[2]  =  (X=-6217, Y=-1407)
+	hallLoc[3]   =  (X=-5503, Y=-1279)
+	hallLoc2[3]  =  (X=-5887, Y=-1023)
+	hallLoc[4]   =  (X=-7679, Y=-639)
+	hallLoc2[4]  =  (X=-7935, Y=1024)
+	//hall 5 overlaps with hall 6
+	hallLoc[5]   =  (X=-5119, Y=-895)
+	hallLoc2[5]  =  (X=-5375, Y=1024)
+	hallLoc[6]   =  (X=-4863, Y=128)
+	hallLoc2[6]  =  (X=-6015, Y=384)
+	hallLoc[7]   =  (X=-4607, Y=2432)
+	hallLoc2[7]  =  (X=-5119, Y=2944)
+	//hall 8 overlaps with room 8
+	hallLoc[8]   =  (X=-1919, Y=-639)
+	hallLoc2[8]  =  (X=-2175, Y=896)
+	hallLoc[9]   =  (X=-511, Y=512)
+	hallLoc2[9]  =  (X=-1535, Y=3456)
+	hallLoc[10]  =  (X=-767, Y=-639)
+	hallLoc2[10] =  (X=-1023, Y=0)
+	hallLoc[11]  =  (X=128, Y=-2559)
+	hallLoc2[11] =  (X=-255, Y=-2047)
+	hallLoc[12]  =  (X=2432, Y=-895)
+	hallLoc2[12] =  (X=2176, Y=-383)
+	hallLoc[13]  =  (X=2432, Y=896)
+	hallLoc2[13] =  (X=2176, Y=1536)
+	hallLoc[14]  =  (X=3584, Y=-3071)
+	hallLoc2[14] =  (X=3200, Y=-2815)
+	hallLoc[15]  =  (X=3200, Y=3072)
+	hallLoc2[15] =  (X=2560, Y=3328)
+	hallLoc[16]  =  (X=5632, Y=-2175)
+	hallLoc2[16] =  (X=5120, Y=-1791)
+	hallLoc[17]  =  (X=5632, Y=2304)
+	hallLoc2[17] =  (X=5120, Y=2688)
+	hallLoc[18]  =  (X=3328, Y=0)
+	hallLoc2[18] =  (X=2688, Y=512)
 	roomName[0] = "Player Start"
 	roomName[1] = "The Sphere"
 	roomName[2] = "The Gallery"
@@ -481,6 +616,7 @@ DefaultProperties
 	roomName[13] = "Alien"
 	roomName[14] = "Crash Site"
 	roomName[15] = "Final"
+	roomName[16] = "Secret Room"
 	roomExplored[0] = 0
 	roomExplored[1] = 0
 	roomExplored[2] = 0
@@ -497,6 +633,7 @@ DefaultProperties
 	roomExplored[13] = 0
 	roomExplored[14] = 0
 	roomExplored[15] = 0
+	roomExplored[16] = 0
 	roomCleared[0] = 0
 	roomCleared[1] = 0
 	roomCleared[2] = 0
@@ -513,8 +650,9 @@ DefaultProperties
 	roomCleared[13] = 0
 	roomCleared[14] = 0
 	roomCleared[15] = 0
+	roomCleared[16] = 0
 	roomSpawns[0] = 3
-	roomSpawns[1] = 9
+	roomSpawns[1] = 15
 	roomSpawns[2] = 3
 	roomSpawns[3] = 3
 	roomSpawns[4] = 3
@@ -529,22 +667,44 @@ DefaultProperties
 	roomSpawns[13] = 3
 	roomSpawns[14] = 3
 	roomSpawns[15] = 1
-	roomPoints[0] = 3
+	roomSpawns[16] = 1
+
+	//The Number of enemies spawn in each room is:
+	//roomPerSpawn[i] * number of spawners placed in map
+	roomPerSpawn[0] = 3
+	roomPerSpawn[1] = 5
+	roomPerSpawn[2] = 3
+	roomPerSpawn[3] = 3
+	roomPerSpawn[4] = 3
+	roomPerSpawn[5] = 3
+	roomPerSpawn[6] = 3
+	roomPerSpawn[7] = 3
+	roomPerSpawn[8] = 3
+	roomPerSpawn[9] = 3
+	roomPerSpawn[10] = 3
+	roomPerSpawn[11] = 3
+	roomPerSpawn[12] = 3
+	roomPerSpawn[13] = 3
+	roomPerSpawn[14] = 3
+	roomPerSpawn[15] = 1
+	roomPerSpawn[16] = 1
+	roomPoints[0] = 0
 	roomPoints[1] = 3
-	roomPoints[2] = 3
-	roomPoints[3] = 3
-	roomPoints[4] = 3
-	roomPoints[5] = 3
-	roomPoints[6] = 3
-	roomPoints[7] = 3
-	roomPoints[8] = 3
-	roomPoints[9] = 3
-	roomPoints[10] = 3
-	roomPoints[11] = 3
-	roomPoints[12] = 3
-	roomPoints[13] = 3
-	roomPoints[14] = 3
-	roomPoints[15] = 3
+	roomPoints[2] = 5
+	roomPoints[3] = 0
+	roomPoints[4] = 1
+	roomPoints[5] = 1
+	roomPoints[6] = 1
+	roomPoints[7] = 2
+	roomPoints[8] = 0
+	roomPoints[9] = 2
+	roomPoints[10] = 1
+	roomPoints[11] = 2
+	roomPoints[12] = 2
+	roomPoints[13] = 2
+	roomPoints[14] = 2
+	roomPoints[15] = 0
+	roomPoints[16] = 2
 
 	/*
 	 * Enemy Type:
@@ -553,13 +713,16 @@ DefaultProperties
 	 *  2: G6Bot_Grenadier
 	 *  3: G6Bot_ShockBaller
 	 *  4: G6Bot_Sniper
+	 *  5: G6Bot_Boomer
+	 *  6: G6Bot_Rocker
+	 *  7: G6Bot_Healer
 	 */
 	enemyTypes[0] = "0"
 	//enemyTypes[1] = "0001112233"
-	enemyTypes[1] = "0011223344"
+	enemyTypes[1] = "0123456712"
 	enemyTypes[2] = "1111223355"
 	enemyTypes[3] = "1111223355"
-	enemyTypes[4] = "1111223355"
+	enemyTypes[4] = "2222222222"
 	enemyTypes[5] = "1111223355"
 	enemyTypes[6] = "1111223355"
 	enemyTypes[7] = "1111223355"
@@ -571,12 +734,35 @@ DefaultProperties
 	enemyTypes[13] = "1111223355"
 	enemyTypes[14] = "1111223355"
 	enemyTypes[15] = "1111223355"
+	enemyTypes[16] = "0000000000"
 	mapZoom = 0.5
-	spawnPoints = (X=-3824,Y=-3376,Z=-441.5368)
+	lastCheckPoint = 0;
+	//spawnPoints[0] = (X=-3824,Y=-3376,Z=-464.8500)
+	spawnPoints[0] = (X=-5631,Y=-3071,Z=-464.8500)
+	spawnPoints[1] = (X=-5695,Y=-2047,Z=-464.8500)
+	spawnPoints[2] = (X=-6143,Y=-1535,Z=-464.8500)
+	spawnPoints[3] = (X=-5695,Y=-1151,Z=-464.8500)
+	spawnPoints[4] = (X=-7807,Y=256,Z=-464.8500)
+	spawnPoints[5] = (X=5247,Y=0,Z=-480.8500)
+	spawnPoints[6] = (X=-5375,Y=256,Z=-336.8500)
+	spawnPoints[7] = (X=-4863,Y=2688,Z=-464.8500)
+	spawnPoints[8] = (X=-2047,Y=128,Z=-480.8500)
+	spawnPoints[9] = (X=-895,Y=2304,Z=-336.8500)
+	spawnPoints[10] = (X=-895,Y=-318,Z=-336.8500)
+	spawnPoints[11] = (X=-63,Y=-2303,Z=-416.8500)
+	spawnPoints[12] = (X=2304,Y=-639,Z=-336.8500)
+	spawnPoints[13] = (X=2304,Y=1216,Z=-336.8500)
+	spawnPoints[14] = (X=3392,Y=-2943,Z=-336.8500)
+	spawnPoints[15] = (X=2880,Y=3200,Z=-336.8500)
+	spawnPoints[16] = (X=5376,Y=-1983,Z=-416.8500)
+	spawnPoints[17] = (X=5376,Y=2496,Z=-416.8500)
+	spawnPoints[18] = (X=3008,Y=256,Z=-400.8500)
 	bMapPan = false
 	bCamType = true
 	camOffset = (X=-400, Y=300, z=500)
 	//camOffset = (X=-300, Y=100, z=500)
 	InputClass = class'G6PlayerInput'
 	bSkinType = true
+
+	bRespawning = False;
 }

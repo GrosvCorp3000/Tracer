@@ -3,6 +3,19 @@
  */
 class G6Weap_RocketLauncher_Content extends G6Weap_RocketLauncher;
 
+simulated function WeaponEmpty(){}
+
+simulated function bool HasAnyAmmo()
+{
+	local G6PlayerController p;
+	p = G6PlayerController (Instigator.Controller);
+	if(p.skills[13] == 1){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 defaultproperties
 {
 	WeaponColor=(R=255,G=0,B=0,A=255)
@@ -10,6 +23,18 @@ defaultproperties
 	FireInterval(1)=+1.05
 	PlayerViewOffset=(X=0.0,Y=0.0,Z=0.0)
 
+	Begin Object Name=FirstPersonMesh
+		SkeletalMesh=SkeletalMesh'WP_RocketLauncher.Mesh.SK_WP_RocketLauncher_1P'
+		PhysicsAsset=None
+		AnimTreeTemplate=AnimTree'WP_RocketLauncher.Anims.AT_WP_RocketLauncher_1P_Base'
+		AnimSets(0)=AnimSet'WP_RocketLauncher.Anims.K_WP_RocketLauncher_1P_Base'
+		Translation=(X=0,Y=0,Z=0)
+		Rotation=(Yaw=0)
+		scale=1.0
+		FOV=60.0
+		bUpdateSkelWhenNotRendered=true
+	End Object
+	SkeletonFirstPersonMesh = FirstPersonMesh;
 	AttachmentClass=class'UTGameContent.UTAttachment_RocketLauncher'
 
 	// Pickup staticmesh

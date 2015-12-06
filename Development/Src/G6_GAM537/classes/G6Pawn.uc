@@ -1,18 +1,6 @@
 class G6Pawn extends UTPawn;
 
-/**
- *	Calculate camera view point, when viewing this pawn.
- *
- * @param	fDeltaTime	delta time seconds since last update
- * @param	out_CamLoc	Camera Location
- * @param	out_CamRot	Camera Rotation
- * @param	out_FOV		Field of View
- *
- * @return	true if Pawn should provide the camera point of view.
- */
 var UTWeapon preHeld;
-var bool bRespawning;
-var int deathTimer;
 
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
@@ -21,7 +9,7 @@ simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface
 
 	if (p != None && p.bSkinType)
 		Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
-		//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard');
+		//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Manta.Mesh.SK_VH_Manta');
 	else
 		Mesh.SetSkeletalMesh(SkeletalMesh'CH_LIAM_Cathode.Mesh.SK_CH_LIAM_Cathode');
 
@@ -40,6 +28,18 @@ simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface
 			`log("VerifyBodyMaterialInstance failed on pawn"@self);
 		}
 	}
+}
+
+function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+	local G6PlayerController PC;
+	PC = G6PlayerController(Controller);
+
+	if (PC != None)
+	{
+		PC.AttemptRespawn();
+	}
+	return false;
 }
 
 simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out rotator out_CamRot, out float out_FOV )
@@ -109,26 +109,6 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 				p.cEnergy++;
 			}
 		}
-		if(Health <= 100){
-			Health = 100;
-			if(!IsInState('FeigningDeath')){
-				FeignDeath();
-				p.IgnoreMoveInput(true);
-				deathTimer = 0;
-			}
-			deathTimer++;
-			if(p.bAttemptRespawn && deathTimer > 250){
-				p.Pawn.SetHidden(true);
-				p.GoToCheckpoint();
-				bRespawning = true;
-			}
-		}
-		if(bRespawning && Health == HealthMax){
-			p.Pawn.SetHidden(false);
-			bRespawning = false;
-			PlayTeleportEffect(true, true);
-		}
-		p.bAttemptRespawn = false;
 	}
 	return true;
 }
@@ -142,7 +122,7 @@ function PossessedBy(Controller C, bool bVehicleTransition) {
 	if (PC != None)
 	{
 		InvManager.CreateInventory(class'G6Weap_Pistol');
-		//InvManager.CreateInventory(class'G6BWeap_Rifle');
+		//InvManager.CreateInventory(class'G6BWeap_BossRocket');
 		//InvManager.CreateInventory(class'G6Weap_Laser');
 		//InvManager.CreateInventory(class'G6Weap_Shotgun');
 		//InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
@@ -197,9 +177,9 @@ DefaultProperties
 	End Object
 	Components.Add(MyLight)
 
-
-	Health = 400
-	HealthMax = 400
+	RotationRate=(Pitch=120000,Yaw=120000,Roll=120000)
+	Health = 300
+	HealthMax = 300
 	GroundSpeed = 800
-	Mass = 500
+	Mass = 380
 }

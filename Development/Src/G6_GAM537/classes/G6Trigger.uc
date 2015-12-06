@@ -28,9 +28,11 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vecto
 				{
 				//`Log("Trying to trigger ... "$S);
 					S.bSpawn = True;
+					S.BotsToSpawn = pc.roomPerSpawn[pc.curRoom];
 					S.enemySelect = pc.enemyTypes[pc.curRoom];
 				}
 			}
+			pc.roomCurKill = 0;
 			pc.bBattleMode = True;
 			pc.roomExplored[pc.curRoom] = 1;
 		}

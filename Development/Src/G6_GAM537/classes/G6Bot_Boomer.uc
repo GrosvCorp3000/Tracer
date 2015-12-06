@@ -1,12 +1,13 @@
-class G6Bot_Grenadier extends G6Bot;
+class G6Bot_Boomer extends G6Bot;
 
 function Possess(Pawn aPawn, bool bVehicleTransition)
 {
 	local int random;
 	random = Rand(5);
 	AggroDistance += random * 80;
-	AttackDistance += random * 60;
+	AttackDistance = 120;
 	approachDistance += random * 50;
+	RetreatDistance += random * 20;
 
 	super.Possess(aPawn, bVehicleTransition);
 	if (NextPatrolPoint != None)
@@ -15,10 +16,11 @@ function Possess(Pawn aPawn, bool bVehicleTransition)
 
 DefaultProperties
 {
+	CombatStyle=1
 	PatrolPointReachedThreshold=50
-	AggroDistance=900
-	EscapeDistance=1700
-	AttackDistance=800
-	approachDistance=600
-	RetreatDistance=350
+	AggroDistance=850
+	EscapeDistance=1100
+	//AttackDistance=70
+	approachDistance=0
+	RetreatDistance=0
 }

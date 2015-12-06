@@ -1,12 +1,12 @@
-class G6BPawn_ShockBaller extends G6BPawn;
+class G6BPawn_Boomer extends G6BPawn;
 
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
-	//Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
+	Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
 	//SkeletalMesh'VH_Cicada.Mesh.SK_VH_Cicada'
-	Mesh.SetSkeletalMesh(SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard');
+	//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard');
 	//SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard'
-	//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Scorpion.Mesh.SK_VH_Scorpion_001');
+	//Mesh.SetSkeletalMesh(SkeletalMesh'KismetGame_Assets.Anims.SK_Jazz');
 	//SkeletalMesh'KismetGame_Assets.Anims.SK_Turtle'
 	//SkeletalMesh'KismetGame_Assets.Anims.SK_TurtleBomb_01'
 	//SkeletalMesh'KismetGame_Assets.Anims.SK_SnakeGib'
@@ -36,7 +36,7 @@ DefaultProperties
 {
 	Begin Object Class=PointLightComponent Name=MyLight
 		Brightness=6.0
-		LightColor=(R=0,G=128,B=128)
+		LightColor=(R=255,G=0,B=0)
 		Radius=70.0
 		bEnabled=TRUE
 
@@ -53,9 +53,10 @@ DefaultProperties
 	End Object
 	Components.Add(MyLight)
 
-	GroundSpeed=800
-	RotationRate=(Pitch=80000,Yaw=80000,Roll=80000)
-
-	Health=130
-	HealthMax=130
+	//HearingThreshold=+5000.0
+	GroundSpeed=200
+	Mass = 500
+	Health=80
+	HealthMax=80
+	RotationRate=(Pitch=250000,Yaw=250000,Roll=250000)
 }

@@ -1,5 +1,18 @@
 class G6Weap_Shotgun extends UTWeapon;
 
+simulated function WeaponEmpty(){}
+
+simulated function bool HasAnyAmmo()
+{
+	local G6PlayerController p;
+	p = G6PlayerController (Instigator.Controller);
+	if(p.skills[8] == 1){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 simulated function vector InstantFireStartTrace()
 {
 	return Instigator.GetWeaponStartTraceLocation();
@@ -8,51 +21,32 @@ simulated function vector InstantFireStartTrace()
 simulated function Array<vector> InstantFireEndTraceA(Array<vector> StartTrace)
 {
 	local Array<vector> EndTrace;
-	//local color myColor;
-	local G6PlayerController p;
 	local rotator tRotator;
-	
-	p = G6PlayerController (Instigator.Controller);
 
 	EndTrace[0] = StartTrace[0] + vector(GetAdjustedAim(StartTrace[0])) * GetTraceRange();
-	//myColor.R = 255;
-	//myColor.A = 255;
-	if (p != None)
-		//p.myHUD.Draw3DLine(StartTrace[0], EndTrace[0], myColor);
 
 	tRotator = GetAdjustedAim(StartTrace[1]);
-	tRotator.Yaw = tRotator.Yaw + 2500;
+	tRotator.Yaw = tRotator.Yaw + 2000;
 	EndTrace[1] = StartTrace[1] + vector(tRotator) * GetTraceRange();
-	//myColor.B = 255;
-	//myColor.A = 255;
-	if (p != None)
-		//p.myHUD.Draw3DLine(StartTrace[1], EndTrace[1], myColor);
 
-	tRotator.Yaw = tRotator.Yaw - 5000;
+	tRotator.Yaw = tRotator.Yaw + 2000;
 	EndTrace[2] = StartTrace[2] + vector(tRotator) * GetTraceRange();
-	//myColor.G = 255;
-	//myColor.A = 255;
-	if (p != None)
-		//p.myHUD.Draw3DLine(StartTrace[2], EndTrace[2], myColor);
 
-	if (StartTrace.Length > 3)
+	tRotator.Yaw = tRotator.Yaw - 6000;
+	EndTrace[3] = StartTrace[3] + vector(tRotator) * GetTraceRange();
+
+	tRotator.Yaw = tRotator.Yaw - 2000;
+	EndTrace[4] = StartTrace[4] + vector(tRotator) * GetTraceRange();
+
+	if (StartTrace.Length > 5)
 	{
 		tRotator = GetAdjustedAim(StartTrace[0]);
-		tRotator.Yaw = tRotator.Yaw + 5000;
-		EndTrace[3] = StartTrace[3] + vector(tRotator) * GetTraceRange();
-		//myColor.B = 255;
-		//myColor.R = 255;
-		//myColor.A = 255;
-		if (p != None)
-			//p.myHUD.Draw3DLine(StartTrace[3], EndTrace[3], myColor);
+		tRotator.Yaw = tRotator.Yaw + 6000;
+		EndTrace[5] = StartTrace[5] + vector(tRotator) * GetTraceRange();
 
-		tRotator.Yaw = tRotator.Yaw - 10000;
-		EndTrace[4] = StartTrace[4] + vector(tRotator) * GetTraceRange();
-		//myColor.R = 255;
-		//myColor.G = 255;
-		//myColor.A = 255;
-		if (p != None)
-			//p.myHUD.Draw3DLine(StartTrace[4], EndTrace[4], myColor);
+		tRotator.Yaw = tRotator.Yaw - 12000;
+		EndTrace[6] = StartTrace[6] + vector(tRotator) * GetTraceRange();
+
 	}
 
 	return EndTrace;
@@ -69,11 +63,11 @@ simulated function InstantFire()
 
 	// define range to use for CalcWeaponFire()
 	
-	volly = 3;
+	volly = 5;
 
 	p = G6PlayerController (Instigator.Controller);
 	if (p != None && p.skills[9] == 1)
-		volly = 5;
+		volly = 7;
 
 	for (k=0; k<volly; k++) {
 		StartTrace[k] = InstantFireStartTrace();
@@ -132,7 +126,7 @@ DefaultProperties
 	FireInterval[0] = 0.8
 	ShotCost[0] = 3
 	WeaponFireAnim[0]=WeaponFire
-	InstantHitDamage[0]=50
+	InstantHitDamage[0]=35
 	InstantHitMomentum[0]=80000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
@@ -141,10 +135,18 @@ DefaultProperties
 	FireInterval[1] = 0.8
 	ShotCost[1] = 3
 	WeaponFireAnim[1]=WeaponFire
-	InstantHitDamage[1]=50
+	InstantHitDamage[1]=60
 	InstantHitMomentum[1]=80000
 	InstantHitDamageTypes[1]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[1]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
+	
+	WeaponEquipSnd=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_RaiseCue'
+	MuzzleFlashSocket=MF
+	MuzzleFlashPSCTemplate=WP_ShockRifle.Particles.P_ShockRifle_MF_Alt
+	MuzzleFlashAltPSCTemplate=WP_ShockRifle.Particles.P_ShockRifle_MF_Alt
+	MuzzleFlashColor=(R=200,G=120,B=255,A=255)
+	MuzzleFlashDuration=0.33
+	MuzzleFlashLightClass=class'UTGame.UTShockMuzzleFlashLight'
 
 	AttachmentClass=class'G6Attachment_Shotgun'
 

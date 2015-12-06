@@ -20,6 +20,7 @@ DefaultProperties
 	EscapeDistance=1700
 	AttackDistance=800
 	approachDistance=500
-	RetreatDistance=150
+	RetreatDistance=250
 	FleeModifer=2
+	CombatStyle=-1
 }

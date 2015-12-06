@@ -1,4 +1,4 @@
-class G6Bot_Grenadier extends G6Bot;
+class G6Bot_Boss extends G6Bot;
 
 function Possess(Pawn aPawn, bool bVehicleTransition)
 {
@@ -16,9 +16,9 @@ function Possess(Pawn aPawn, bool bVehicleTransition)
 DefaultProperties
 {
 	PatrolPointReachedThreshold=50
-	AggroDistance=900
-	EscapeDistance=1700
-	AttackDistance=800
+	AggroDistance=1500
+	EscapeDistance=2800
+	AttackDistance=1200
 	approachDistance=600
-	RetreatDistance=350
+	RetreatDistance=300
 }

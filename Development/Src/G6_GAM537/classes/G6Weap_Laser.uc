@@ -95,6 +95,19 @@ var ParticleSystem HighPowerMuzzleFlashTemplate;
 /** True if have picked up link booster */
 var repnotify bool bFullPower;
 
+simulated function WeaponEmpty(){}
+
+simulated function bool HasAnyAmmo()
+{
+	local G6PlayerController p;
+	p = G6PlayerController (Instigator.Controller);
+	if(p.skills[3] == 1){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 replication
 {
 	if (bNetDirty)
@@ -1177,6 +1190,74 @@ simulated state WeaponEquipping
 	}
 }
 
+simulated function UpdateBeam(float DeltaTime)
+{
+	local Array<Vector>	StartTrace, EndTrace, AimDir;
+	local Array<ImpactInfo>	RealImpact, NearImpact;
+	local G6PlayerController p;
+	local int i, j, numLine;
+
+	numLine = 1;
+
+	p = G6PlayerController (Instigator.Controller);
+
+	if (p != None && p.skills[4] == 1)
+		numLine = 3;
+
+	// define range to use for CalcWeaponFire()
+
+	for (i=0; i<numLine; i++) {
+		StartTrace[i] = Instigator.GetWeaponStartTraceLocation();
+		AimDir[i] = Vector(GetAdjustedAim( StartTrace[i] ));
+	}
+	EndTrace = InstantFireEndTraceA(StartTrace);
+
+	for (j=0; j<StartTrace.Length; j++)
+	{
+		// Trace a shot
+		RealImpact[j] = CalcWeaponFire( StartTrace[j], EndTrace[j] );
+		bUsingAimingHelp = false;
+
+		if ( (RealImpact[j].HitActor == None) || !RealImpact[j].HitActor.bProjTarget )
+		{
+			// console aiming help
+			NearImpact[j] = InstantAimHelp(StartTrace[j], EndTrace[j], RealImpact[j]);
+
+		}
+		if ( NearImpact[j].HitActor != None )
+		{
+			bUsingAimingHelp = true;
+			ProcessBeamHit(StartTrace[j], AimDir[j], NearImpact[j], DeltaTime);
+			UpdateBeamEmitter(NearImpact[j].HitLocation, NearImpact[j].HitNormal, NearImpact[j].HitActor);
+		}
+		else
+		{
+			// Allow children to process the hit
+			ProcessBeamHit(StartTrace[j], AimDir[j], RealImpact[j], DeltaTime);
+			UpdateBeamEmitter(RealImpact[j].HitLocation, RealImpact[j].HitNormal, RealImpact[j].HitActor);
+		}
+	}
+}
+
+simulated function Array<vector> InstantFireEndTraceA(Array<vector> StartTrace)
+{
+	local Array<vector> EndTrace;
+	local rotator tRotator;
+
+	EndTrace[0] = StartTrace[0] + vector(GetAdjustedAim(StartTrace[0])) * GetTraceRange();
+
+	if (StartTrace.Length > 1)
+	{
+		tRotator = GetAdjustedAim(StartTrace[0]);
+		tRotator.Yaw = tRotator.Yaw + 1500;
+		EndTrace[1] = StartTrace[1] + vector(tRotator) * GetTraceRange();
+		tRotator.Yaw = tRotator.Yaw - 3000;
+		EndTrace[2] = StartTrace[2] + vector(tRotator) * GetTraceRange();
+	}
+	
+	return EndTrace;
+}
+
 defaultproperties
 {
 	WeaponColor=(R=255,G=255,B=0,A=255)
@@ -1240,7 +1321,7 @@ defaultproperties
 	bAutoCharge=false
 	RechargeRate=1.0
 
-	WeaponRange=1200
+	WeaponRange=700
 	LinkStrength=1
 	LinkFlexibility=0.64	// determines how easy it is to maintain a link.
 							// 1=must aim directly at linkee, 0=linkee can be 90 degrees to either side of you
@@ -1248,7 +1329,7 @@ defaultproperties
 	LinkBreakDelay=0.5		// link will stay established for this long extra when blocked (so you don't have to worry about every last tree getting in the way)
 	WeaponLinkDistance=160.0
 
-	InstantHitDamage(1)=150
+	InstantHitDamage(1)=180
 	InstantHitDamageTypes(1)=class'UTDmgType_LinkBeam'
 
 	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Link_Cue'
@@ -1257,7 +1338,7 @@ defaultproperties
 	LockerAmmoCount=100
 	MaxAmmoCount=100
 	MomentumTransfer=50000.0
-	BeamAmmoUsePerSecond=8.5
+	BeamAmmoUsePerSecond=3
 	MinimumDamage=5.0
 
 	EffectSockets(0)=MuzzleFlashSocket

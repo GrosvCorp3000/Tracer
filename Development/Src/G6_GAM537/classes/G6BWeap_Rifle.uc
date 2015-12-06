@@ -1,9 +1,14 @@
 class G6BWeap_Rifle extends UTWeap_ShockRifle;
 
+function byte BestMode()
+{
+	return 0;
+}
+
 DefaultProperties
 {
-	InstantHitDamage(0)=40
-	InstantHitDamage(1)=40
+	InstantHitDamage(0)=35
+	InstantHitDamage(1)=35
 	WeaponFireTypes(0)=EWFT_InstantHit
 	WeaponFireTypes(1)=EWFT_InstantHit
 	InstantHitDamageTypes(0)=class'UTDmgType_ShockPrimary'

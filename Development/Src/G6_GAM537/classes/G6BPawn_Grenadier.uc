@@ -35,7 +35,7 @@ simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface
 DefaultProperties
 {
 	Begin Object Class=PointLightComponent Name=MyLight
-		Brightness=5.0
+		Brightness=6.0
 		LightColor=(R=255,G=255,B=0)
 		Radius=70.0
 		bEnabled=TRUE
@@ -56,5 +56,5 @@ DefaultProperties
 	GroundSpeed=300
 	Mass = 500
 	Health=150
-	HealthMax=150
+	HealthMax=170
 }

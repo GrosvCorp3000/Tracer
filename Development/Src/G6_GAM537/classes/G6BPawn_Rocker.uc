@@ -1,10 +1,10 @@
-class G6BPawn_Sniper extends G6BPawn;
+class G6BPawn_Rocker extends G6BPawn;
 
 DefaultProperties
 {
 	Begin Object Class=PointLightComponent Name=MyLight
-		Brightness=6.0
-		LightColor=(R=0,G=0,B=255)
+		Brightness=5.0
+		LightColor=(R=255,G=192,B=203)
 		Radius=70.0
 		bEnabled=TRUE
 
@@ -20,10 +20,10 @@ DefaultProperties
 		bPrecomputedLightingIsValid=TRUE
 	End Object
 	Components.Add(MyLight)
-	GroundSpeed=10000
-	RotationRate=(Pitch=350000,Yaw=350000,Roll=350000)
+	GroundSpeed=1500
+	RotationRate=(Pitch=150000,Yaw=150000,Roll=150000)
 
-	Health=120
-	HealthMax=120
+	Health=150
+	HealthMax=150
 	Mass=200
 }

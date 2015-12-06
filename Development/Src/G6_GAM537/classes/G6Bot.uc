@@ -13,6 +13,11 @@ var G6Spawner MySpawner;
 var Actor _intermediate;
 var float _dist;
 
+var vector fleeLocation;
+var int fleeChaos;
+var int fleeXDirection;
+var int fleeYDirection;
+
 function EnterPatrolPath(G6PatrolPath path)
 {
 	NextPatrolPoint = path;
@@ -107,6 +112,33 @@ function Possess(Pawn aPawn, bool bVehicleTransition)
 		GotoState('FollowingPatrolPath', 'Begin');
 }
 
+function vector determineFlee()
+{
+	local int rollDice;
+	
+	rollDice = Rand(10);
+
+	if (rollDice < 2) {
+		fleeXDirection = Rand(2);
+		fleeYDirection = Rand(2);
+		fleeChaos = Rand(5);
+	}
+    if (fleeXDirection == 1)
+		fleeLocation.X = Enemy.Location.X + 100 * fleeChaos * FleeModifer;
+	else
+		fleeLocation.X = Enemy.Location.X - 100 * fleeChaos * FleeModifer;
+
+	if (fleeYDirection == 1)
+		fleeLocation.Y = Enemy.Location.Y + 100 * fleeChaos * FleeModifer;
+	else
+		fleeLocation.Y = Enemy.Location.Y - 100 * fleeChaos * FleeModifer;
+
+	fleeLocation.Z = Enemy.Location.Z;
+	
+	return fleeLocation;
+}
+
+
 auto state FollowingPatrolPath
 {
 Begin:
@@ -128,31 +160,20 @@ Begin:
 
 state HuntingPlayer
 {
-	local vector fleeLocation;
-	local int fleeChaos;
-	local int fleeDirection;
 Begin:
 	if (Enemy != None && Pawn != None)
 	{
 		_dist = VSize(Enemy.Location - Pawn.Location);
-		if (!FastTrace(Enemy.Location, Pawn.location) || _dist > EscapeDistance)
+
+		if (_dist > EscapeDistance)
 		{
 			_intermediate = FindPathToward(NextPatrolPoint);
 			MoveToward(_intermediate);
-		} 
+		}
+		//else if (!FastTrace(Enemy.Location, Pawn.location) || _dist < RetreatDistance)
 		else if (_dist < RetreatDistance)
 		{
-			fleeDirection = Rand(2);
-			fleeChaos = Rand(5);
-			if (fleeDirection == 1) {
-				fleeLocation.X = Enemy.Location.X + 100 * fleeChaos * FleeModifer;
-				fleeLocation.Y = Enemy.Location.Y + 100 * fleeChaos * FleeModifer;
-			} else {
-				fleeLocation.X = Enemy.Location.X - 100 * fleeChaos * FleeModifer;
-				fleeLocation.Y = Enemy.Location.Y - 100 * fleeChaos * FleeModifer;
-			}
-			fleeLocation.Z = Enemy.Location.Z;
-			MoveTo(fleeLocation);
+			MoveTo(determineFlee());
 		}
 		else if (FastTrace(Enemy.Location, Pawn.location) && _dist <= AttackDistance)
 		{
@@ -169,7 +190,7 @@ Begin:
 			else
 			{
 				_intermediate = FindPathToward(Enemy);
-				MoveToward(Enemy);
+				MoveToward(_intermediate);
 			}
 		}
 	}
@@ -185,4 +206,7 @@ DefaultProperties
 	approachDistance=350
 	RetreatDistance=100
 	FleeModifer=1
+	fleeXDirection=1
+	fleeYDirection=1
+	fleeChaos=2
 }

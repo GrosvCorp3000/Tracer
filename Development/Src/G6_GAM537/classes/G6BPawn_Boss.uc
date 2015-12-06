@@ -1,19 +1,8 @@
-class G6BPawn_ShockBaller extends G6BPawn;
+class G6BPawn_Boss extends G6BPawn;
 
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
-	//Mesh.SetSkeletalMesh(SkeletalMesh'CH_IronGuard_Male.Mesh.SK_CH_IronGuard_MaleA');
-	//SkeletalMesh'VH_Cicada.Mesh.SK_VH_Cicada'
-	Mesh.SetSkeletalMesh(SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard');
-	//SkeletalMesh'VH_Hoverboard.Mesh.SK_VH_Hoverboard'
-	//Mesh.SetSkeletalMesh(SkeletalMesh'VH_Scorpion.Mesh.SK_VH_Scorpion_001');
-	//SkeletalMesh'KismetGame_Assets.Anims.SK_Turtle'
-	//SkeletalMesh'KismetGame_Assets.Anims.SK_TurtleBomb_01'
-	//SkeletalMesh'KismetGame_Assets.Anims.SK_SnakeGib'
-	//SkeletalMesh'FoliageDemo.Animated.SP_Bird1_SKMesh'
-    //Mesh.SetSkeletalMesh(SkeletalMesh'KismetGame_Assets.Anims.SK_Jazz');
-	//SkeletalMesh'VH_Manta.Mesh.SK_VH_Manta'
-	//SkeletalMesh'VH_Scorpion.Mesh.SK_VH_Scorpion_001'
+	Mesh.SetSkeletalMesh(SkeletalMesh'VH_Manta.Mesh.SK_VH_Manta');
 
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
@@ -34,10 +23,13 @@ simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface
 
 DefaultProperties
 {
-	Begin Object Class=PointLightComponent Name=MyLight
-		Brightness=6.0
-		LightColor=(R=0,G=128,B=128)
-		Radius=70.0
+	Begin Object Class=SpotLightComponent Name=MyFlashLight
+		Brightness=15.0
+		LightColor=(R=255,G=0,B=0)
+		Radius=768.0
+		InnerConeAngle=0
+		OuterConeAngle=22
+		LightShaftConeAngle=55
 		bEnabled=TRUE
 
 		// for now we are leaving this as people may be depending on it in script and we just
@@ -51,11 +43,11 @@ DefaultProperties
 		UseDirectLightMap=FALSE
 		bPrecomputedLightingIsValid=TRUE
 	End Object
-	Components.Add(MyLight)
+	Components.Add(MyFlashLight)
 
-	GroundSpeed=800
 	RotationRate=(Pitch=80000,Yaw=80000,Roll=80000)
-
-	Health=130
-	HealthMax=130
+	GroundSpeed=850
+	Mass = 500
+	Health=1500
+	HealthMax=1500
 }
