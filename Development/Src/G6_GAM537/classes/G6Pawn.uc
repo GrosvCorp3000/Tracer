@@ -76,7 +76,8 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 	{
 		if (PC.bSpecial)
 			PC.toggleSpecial();
-		PC.cSpecial *= 0.5;
+		PC.cSpecial *= 0.6;
+		PC.roomSpawns[16] = 1;
 		PC.AttemptRespawn();
 	}
 	return false;

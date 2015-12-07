@@ -753,7 +753,7 @@ DefaultProperties
 	enemyTypes[3] = "0"
 	enemyTypes[4] = "2222222222"
 	enemyTypes[5] = "5555555555"
-	enemyTypes[6] = "0011133666"
+	enemyTypes[6] = "0013666666"
 	enemyTypes[7] = "1111222555"
 	enemyTypes[8] = "4444444444"
 	enemyTypes[9] = "0011155577"

@@ -31,6 +31,7 @@ function Timer()
 function UTBot SpawnBot()
 {
 	local UTBot NewBot;
+	local G6PlayerController P;
 	local Pawn NewPawn;
 	local rotator StartRotation;
 
@@ -108,6 +109,11 @@ function UTBot SpawnBot()
 			NewPawn.InvManager.CreateInventory(class'G6BWeap_CrazyRocket');
 			G6Bot_Rocker (NewBot).EnterPatrolPath(self);
 			break;
+	}
+
+	foreach AllActors( class'G6PlayerController', P )
+	{
+		P.roomSpawns[16]++;
 	}
 
 	return NewBot;

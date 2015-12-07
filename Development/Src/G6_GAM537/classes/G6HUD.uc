@@ -78,9 +78,9 @@ function DrawHUD()
 	//Update the Special Values and Bar
 	if (p.bSpecial) {
 		if (p.skills[12] == 1)
-			specialRand = Rand(5);
+			specialRand = Rand(7);
 		else
-			specialRand = Rand(2);
+			specialRand = Rand(3);
 		if (specialRand==1)
 			p.cSpecial = (Clamp(p.cSpecial - 0.00001, 0, 100));
 		if (p.cSpecial <= 1)
@@ -199,7 +199,7 @@ function DrawHUD()
 		p.cSkPts += p.roomPoints[p.curRoom];
 		if (p.bSpecial)
 			p.toggleSpecial();
-		p.cSpecial *= 0.7;
+		p.cSpecial *= 0.8;
 		foreach AllActors( class'Trigger', T )
 		{
 			T.SetCollision(True);
