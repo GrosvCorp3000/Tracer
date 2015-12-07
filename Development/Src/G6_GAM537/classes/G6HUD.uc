@@ -32,13 +32,16 @@ function DrawTileCentered(texture2D Tex, float xl, float yl, float u, float v, f
 function DrawHUD()
 {
 	local vector playerProject;
+	local vector BossProject;
 	local Vector2D TextSize;
 	local G6PlayerController p;
 	local G6PlayerInput p_input;
 	local int playerHealth;
 	local int playerHealthMax;
 	local float HealthPercent;
+	local float BossHealthPercent;
 	local float EnergyPercent;
+	local float SpecialPercent;
 	local int mapRoom;
 	local int drawSkillTree1;
 	local int drawSkillTree2;
@@ -57,6 +60,11 @@ function DrawHUD()
 	local intPoint mapFogLoc;
 	local intPoint mapFogLoc2;
 	local Trigger T;
+	local G6BPawn_Boss Boss;
+
+	local int specialRand;
+	local int l_minute;
+	local int l_second;
 
 	mapTexture = Texture2D'G6.Textures.Map';
 
@@ -66,6 +74,19 @@ function DrawHUD()
 	playerHealthMax = p.Pawn.HealthMax;
 	HealthPercent = playerHealth / float(playerHealthMax);
 	EnergyPercent = p.cEnergy / float(p.cEnergyMax);
+
+	//Update the Special Values and Bar
+	if (p.bSpecial) {
+		if (p.skills[12] == 1)
+			specialRand = Rand(5);
+		else
+			specialRand = Rand(2);
+		if (specialRand==1)
+			p.cSpecial = (Clamp(p.cSpecial - 0.00001, 0, 100));
+		if (p.cSpecial <= 1)
+			p.toggleSpecial();
+	}
+	SpecialPercent = p.cSpecial / p.cSpecialMax;
 
 	super.DrawHUD();
 
@@ -113,7 +134,9 @@ function DrawHUD()
 			MapLocationName = p.roomName[mapRoom];
 			if(mapRoom != 8 || (mapRoom == 8 && PawnLocation.Z >= -337)){
 				p.curRoom = mapRoom;
-				//p.roomExplored[mapRoom] = 1;
+				if(mapRoom == 3){
+					p.roomExplored[mapRoom] = 1;
+				}
 				inRoom = true;
 			}
 		}
@@ -147,7 +170,7 @@ function DrawHUD()
 	Canvas.Font = PlayerFont;
 	Canvas.SetPos(SizeX*0.015, SizeY*0.015);
 	if (p.roomCleared[p.curRoom] == 0 || MapLocationName == " " ) {
-		if (p.roomCleared[p.curRoom] == 0 && p.roomExplored[p.curRoom] == 1) 
+		if (p.roomCleared[p.curRoom] == 0 && p.roomExplored[p.curRoom] == 1 && p.curRoom != 3)
 			Canvas.SetDrawColorStruct(RedColor);
 		else
 			Canvas.SetDrawColorStruct(WhiteColor);
@@ -155,8 +178,18 @@ function DrawHUD()
 	}else {
 		Canvas.SetDrawColorStruct(GreenColor);
 		Canvas.DrawText("Cleared: "$MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
-		p.bBattleMode = false;
 	}
+
+	//Display Time
+	Canvas.Font = PlayerFont;
+	Canvas.SetPos(SizeX*0.9, SizeY*0.015);
+	Canvas.SetDrawColorStruct(WhiteColor);
+
+	l_minute = 0;
+	l_second = 0;
+	l_minute = Self.WorldInfo.GRI.ElapsedTime/60;
+	l_second = Self.WorldInfo.GRI.ElapsedTime - l_minute * 60;
+	Canvas.DrawText(l_minute$": "$l_second,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
 
 	//Check if the Room is cleared
 	if (p.roomCleared[p.curRoom] == 0 && p.roomExplored[p.curRoom] == 1 && p.roomSpawns[p.curRoom] == p.roomCurKill)
@@ -164,6 +197,9 @@ function DrawHUD()
 		p.roomCleared[p.curRoom] = 1;
 		p.bBattleMode = false;
 		p.cSkPts += p.roomPoints[p.curRoom];
+		if (p.bSpecial)
+			p.toggleSpecial();
+		p.cSpecial *= 0.7;
 		foreach AllActors( class'Trigger', T )
 		{
 			T.SetCollision(True);
@@ -192,6 +228,21 @@ function DrawHUD()
 			Canvas.SetDrawColor(128,0,0);
 			Canvas.SetPos(playerProject.X-45, playerProject.Y+50+10);
 			Canvas.DrawBox(80,10);
+
+			//Also draw the Boss's Health
+			foreach AllActors( class'G6BPawn_Boss', Boss ) 
+			{
+				BossProject = Canvas.Project(Boss.Location);
+				BossHealthPercent = Boss.Health / float(Boss.HealthMax);
+				//Unit Health meter
+				Canvas.SetDrawColor(255,0,0);
+				Canvas.SetPos(BossProject.X-40, BossProject.Y+55);
+				Canvas.DrawRect(BossHealthPercent*100,8);
+				//Unit Health meter outline
+				Canvas.SetDrawColor(128,0,0);
+				Canvas.SetPos(BossProject.X-40, BossProject.Y+55);
+				Canvas.DrawBox(100,10);
+			}
 		}
 
 		if (p.unitHE == 0 || p.unitHE == 1) {
@@ -233,6 +284,20 @@ function DrawHUD()
 			Canvas.SetDrawColor(192,192,0);
 			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-48);
 			Canvas.DrawBox(200,32);
+
+			//Special Bar Background
+			Canvas.SetDrawColor(0,0,0);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-152);
+			Canvas.DrawRect(150,32);
+			//Special Bar
+			Canvas.SetDrawColor(0,0,170);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-152);
+			Canvas.DrawRect(SpecialPercent*150,32);
+			//Special Bar Outline
+			Canvas.SetDrawColor(0,0,255);
+			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-152);
+			Canvas.DrawBox(150,32);
+
 
 			//Draw Numbers
 			Canvas.Font = PlayerFont;
@@ -537,7 +602,7 @@ function DrawHUD()
 		DrawTileCentered(mapTexture, mapScreenSize, mapScreenSize, mapDraw.X, mapDraw.Y, 512 * p.mapZooming, 512 * p.mapZooming, LC_White);
 
 		Canvas.SetDrawColor(0,0,0,208);
-		for(mapRoom = 0; mapRoom < 17; mapRoom++){
+		for(mapRoom = 1; mapRoom < 17; mapRoom++){
 			if(p.roomExplored[mapRoom] == 0){
 				mapFogLoc.Y = (8191-p.roomLoc[mapRoom].X) / 16;
 				mapFogLoc.X = ((p.roomLoc[mapRoom].Y + 4095) / 16) - 1;
@@ -562,7 +627,7 @@ function DrawHUD()
 			if(p.hallExplored[mapRoom] == 0){
 				mapFogLoc.Y = (8191-p.hallLoc[mapRoom].X) / 16;
 				mapFogLoc.X = (p.hallLoc[mapRoom].Y + 4095) / 16;
-				mapFogLoc2.Y = ((8191-p.hallLoc2[mapRoom].X) / 16) + 5;
+				mapFogLoc2.Y = ((8191-p.hallLoc2[mapRoom].X) / 16) + 2;
 				mapFogLoc2.X = ((p.hallLoc2[mapRoom].Y + 4095) / 16) + 2;
 				
 				playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (mapFogLoc.X - mapDraw.X));
@@ -584,14 +649,14 @@ function DrawHUD()
 					playerMapVisual.Y = Clamp(playerMapVisual.Y, mapScreenLoc.Y, mapScreenLoc.Y + mapScreenSize);
 					Canvas.SetPos(playerMapVisual.X - ((1-p.mapZooming)/2 + p.mapZooming), playerMapVisual.Y - ((1-p.mapZooming)/2 + p.mapZooming));
 				}else if(mapRoom == 8){
-					playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (255.9375 - mapDraw.X));
-					playerMapVisual.Y = mapScreenLoc.Y + (((mapScreenSize / (512 * p.mapZooming))) * (647.875 - mapDraw.Y));
+					playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (256 - mapDraw.X));
+					playerMapVisual.Y = mapScreenLoc.Y + (((mapScreenSize / (512 * p.mapZooming))) * (649 - mapDraw.Y));
 					playerMapVisual.X = Clamp(playerMapVisual.X, mapScreenLoc.X, mapScreenLoc.X + mapScreenSize);
 					playerMapVisual.Y = Clamp(playerMapVisual.Y, mapScreenLoc.Y, mapScreenLoc.Y + mapScreenSize);
 					Canvas.DrawRect(playerMapVisual.X - Canvas.CurX, playerMapVisual.Y - Canvas.CurY);
 
-					playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (287.9375 - mapDraw.X));
-					playerMapVisual.Y = mapScreenLoc.Y + (((mapScreenSize / (512 * p.mapZooming))) * (631.875 - mapDraw.Y));
+					playerMapVisual.X = mapScreenLoc.X + ((mapScreenSize / (512 * p.mapZooming)) * (288 - mapDraw.X));
+					playerMapVisual.Y = mapScreenLoc.Y + (((mapScreenSize / (512 * p.mapZooming))) * (631 - mapDraw.Y));
 					playerMapVisual.X = Clamp(playerMapVisual.X, mapScreenLoc.X, mapScreenLoc.X + mapScreenSize);
 					playerMapVisual.Y = Clamp(playerMapVisual.Y, mapScreenLoc.Y, mapScreenLoc.Y + mapScreenSize);
 					Canvas.SetPos(playerMapVisual.X - ((1-p.mapZooming)/2 + p.mapZooming), playerMapVisual.Y - ((1-p.mapZooming)/2 + p.mapZooming));
@@ -602,12 +667,6 @@ function DrawHUD()
 				playerMapVisual.X = Clamp(playerMapVisual.X, mapScreenLoc.X, mapScreenLoc.X + mapScreenSize);
 				playerMapVisual.Y = Clamp(playerMapVisual.Y, mapScreenLoc.Y, mapScreenLoc.Y + mapScreenSize);
 				Canvas.DrawRect(playerMapVisual.X - Canvas.CurX, playerMapVisual.Y - Canvas.CurY);
-			}
-		}
-
-		for(mapRoom = 0; mapRoom < 19; mapRoom++){
-			if(p.hallExplored[mapRoom] == 1){
-				//Canvas.DrawRect();
 			}
 		}
 

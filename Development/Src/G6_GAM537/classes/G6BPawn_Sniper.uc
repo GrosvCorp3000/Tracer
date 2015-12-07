@@ -23,7 +23,7 @@ DefaultProperties
 	GroundSpeed=10000
 	RotationRate=(Pitch=350000,Yaw=350000,Roll=350000)
 
-	Health=120
-	HealthMax=120
+	Health=150
+	HealthMax=150
 	Mass=200
 }

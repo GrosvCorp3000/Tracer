@@ -512,14 +512,19 @@ defaultproperties
 	PoweredUpEffect=PoweredUpComponent
 	PoweredUpEffectSocket=PowerEffectSocket
 
-	LinkBeamColors(0)=(R=255,G=64,B=64,A=255)
-	LinkBeamColors(1)=(R=64,G=64,B=255,A=255)
-	LinkBeamColors(2)=(R=128,G=220,B=120,A=255)
-	HighPowerBeamColor=(R=192,G=192,B=32,A=255)
+	//LinkBeamColors(0)=(R=255,G=64,B=64,A=255)
+	//LinkBeamColors(1)=(R=64,G=64,B=255,A=255)
+	//LinkBeamColors(2)=(R=128,G=220,B=120,A=255)
+	//HighPowerBeamColor=(R=192,G=192,B=32,A=255)
+
+	LinkBeamColors(0)=(R=255,G=0,B=0,A=255)
+	LinkBeamColors(1)=(R=255,G=0,B=0,A=255)
+	LinkBeamColors(2)=(R=255,G=0,B=0,A=255)
+	HighPowerBeamColor=(R=255,G=0,B=0,A=255)
 
 	LinkBeamSystems[0]=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam_Red'
 	LinkBeamSystems[1]=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam_Blue'
-	LinkBeamSystems[2]=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam'
+	LinkBeamSystems[2]=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam_Gold'
 
 	HighPowerSystem=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam_Gold'
 
@@ -542,6 +547,7 @@ defaultproperties
 	MuzzleFlashLightClass=class'UTLinkGunMuzzleFlashLight'
 
 	BeamTemplate[1]=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Altbeam'
+	//BeamTemplate[1]=particlesystem'WP_ShockRifle.Particles.P_WP_ShockRifle_Beam'
 	BeamSockets[1]=MussleFlashSocket02
 
 	EndPointParamName=LinkBeamEnd

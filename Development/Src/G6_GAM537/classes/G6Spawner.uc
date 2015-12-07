@@ -172,7 +172,7 @@ function UTBot SpawnBot()
 DefaultProperties
 {
 	Begin Object Class=StaticMeshComponent Name=DisplayMesh
-		StaticMesh=StaticMesh'NodeBuddies.NodeBuddy_PerchUp'
+		//StaticMesh=StaticMesh'NodeBuddies.NodeBuddy_PerchUp'
 	End Object
 	Components.Add(DisplayMesh)
 

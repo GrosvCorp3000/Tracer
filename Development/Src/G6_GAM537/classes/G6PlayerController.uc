@@ -9,10 +9,13 @@ var bool bSkill;
 var bool bMap;
 var bool bCamType;
 var bool bSkinType;
+var bool bSpecial;
 
 //Character attributes
 var int cEnergy;
 var int cEnergyMax;
+var float cSpecial;
+var float cSpecialMax;
 var int cSkPts;
 
 var int currentWeapon;
@@ -75,7 +78,7 @@ var int cpRoomSpawns[17];
 var int lastCheckPoint;
 var vector spawnPoints[19];
 var bool bRespawning;
-//var bool bAttemptRespawn;
+var bool bRespawn;
 
 /* This really should be a 2D array, but UnrealScript, so this work around
  * Each Room has its own possible combination of enemies, the probablity is set by this variable
@@ -212,6 +215,35 @@ exec function StopMapPan()
 	bMapPan = false;
 }
 
+exec function toggleSpecial()
+{
+	if (bBattleMode && !bSpecial && cSpecial >= 75)
+		bSpecial = True;
+	else
+		bSpecial = False;
+
+	if (bSpecial) {
+		WorldInfo.Game.SetGameSpeed(0.25);
+		ToggleCam();
+	}
+	else {
+		WorldInfo.Game.SetGameSpeed(1);
+		ToggleCam();
+	}
+}
+
+exec function ToggleCam() 
+{
+	if (bSpecial) {
+		camOffset.X = -300;
+		camOffset.Y = 100;
+		camOffset.Z = 300;
+	} else {
+		camOffset.X = -400;
+		camOffset.Y = 300;
+		camOffset.Z = 500;
+	}
+}
 exec function ToggleBattle() 
 {
 	if (Pawn != none) {
@@ -239,7 +271,8 @@ exec function AttemptRespawn()
 	local G6Spawner S;
 	p = G6Pawn (Pawn);
 
-	if(!p.IsInState('FeigningDeath')){
+	if(!p.bFeigningDeath){
+		bBattleMode = true;
 		p.FeignDeath();
 		IgnoreMoveInput(true);
 	}
@@ -248,34 +281,40 @@ exec function AttemptRespawn()
 		S.bSpawn = False;
 	}
 	bRespawning=True;
-	KillAllEnemies();
-	Pawn.SetHidden(true);
 	SetTimer(3, true, nameof(Respawn));
 }
 
 function Respawn()
 {
+	local G6Pawn p;
 	local Trigger T;
+	p = G6Pawn (Pawn);
 
-	if (bRespawning) 
+	if (bRespawning)
 	{
-		roomExplored[curRoom] = 0;
-		GoToCheckpoint();
-		KillAllEnemies();
-		IgnoreMoveInput(false);
-		Pawn.SetHidden(false);
-		PlayTeleportEffect(true, true);
-		SwitchWeapon(1);	
-		bBattleMode = False;
+		if(bRespawn){
+			Pawn.SetHidden(true);
+			if(p.bFeigningDeath){
+				p.FeignDeath();
+			}
+			GoToCheckpoint();
+			KillAllEnemies();
+			bRespawn = false;
+		}
+		SwitchWeapon(1);
 		foreach AllActors( class'Trigger', T )
 		{
 			T.SetCollision(True);
 		}
-		bRespawning = False;
+		if(p.Health == p.HealthMax){
+			bRespawning = False;
+			Pawn.SetHidden(false);
+			PlayTeleportEffect(true, true);
+			IgnoreMoveInput(false);
+		}
 		roomCurKill = 0;
-		
+		SetTimer(0.1, true, nameof(Respawn));
 	}
-	SetTimer(0, true, nameof(Respawn));
 }
 
 exec function CheckPointSave()
@@ -300,10 +339,16 @@ exec function GoToCheckpoint()
 {	
 	CheckPointLoad();
 
-	Pawn.Health++;
 	bBattleMode = false;
 	Pawn.SetLocation(spawnPoints[lastCheckPoint]);
-	IgnoreMoveInput(false);
+	//IgnoreMoveInput(false);
+}
+
+exec function TeleportTo(int T) 
+{
+	if (!bBattleMode) {
+		Pawn.SetLocation(spawnPoints[T]);
+	}	
 }
 
 exec function CheckPointLoad()
@@ -335,22 +380,6 @@ exec function ToggleSkin()
 {
 	if (Pawn != none) {
 		bSkinType = !bSkinType;
-	}
-}
-
-exec function ToggleCam() 
-{
-	if (Pawn != none) {
-		bCamType = !bCamType;
-	}
-	if (bCamType) {
-		camOffset.X = -300;
-		camOffset.Y = 100;
-		camOffset.Z = 300;
-	} else {
-		camOffset.X = -400;
-		camOffset.Y = 300;
-		camOffset.Z = 500;
 	}
 }
 
@@ -493,7 +522,7 @@ DefaultProperties
 	skillNames[4] = " Laser+"
 	skillNames[5] = " Energy"
 	skillNames[6] = " Energy2"
-	skillNames[7] = "Recharge"
+	skillNames[7] = "Vengence"
 	skillNames[8] = "Shotgun"
 	skillNames[9] = "Shotgun+"
 	skillNames[10] = " Speed"
@@ -565,7 +594,7 @@ DefaultProperties
 	hallLoc[1]   =  (X=-5503, Y=-2175)
 	hallLoc2[1]  =  (X=-5887, Y=-1919)
 	hallLoc[2]   =  (X=-6015, Y=-1663)
-	hallLoc2[2]  =  (X=-6217, Y=-1407)
+	hallLoc2[2]  =  (X=-6271, Y=-1407)
 	hallLoc[3]   =  (X=-5503, Y=-1279)
 	hallLoc2[3]  =  (X=-5887, Y=-1023)
 	hallLoc[4]   =  (X=-7679, Y=-639)
@@ -651,58 +680,58 @@ DefaultProperties
 	roomCleared[14] = 0
 	roomCleared[15] = 0
 	roomCleared[16] = 0
-	roomSpawns[0] = 3
-	roomSpawns[1] = 15
-	roomSpawns[2] = 3
-	roomSpawns[3] = 3
-	roomSpawns[4] = 3
-	roomSpawns[5] = 3
-	roomSpawns[6] = 3
-	roomSpawns[7] = 3
+	roomSpawns[0] = -1
+	roomSpawns[1] = 9
+	roomSpawns[2] = 6
+	roomSpawns[3] = -1
+	roomSpawns[4] = 12
+	roomSpawns[5] = 6
+	roomSpawns[6] = 8
+	roomSpawns[7] = 16
 	roomSpawns[8] = 3
-	roomSpawns[9] = 3
-	roomSpawns[10] = 3
-	roomSpawns[11] = 3
-	roomSpawns[12] = 3
-	roomSpawns[13] = 3
-	roomSpawns[14] = 3
+	roomSpawns[9] = 12
+	roomSpawns[10] = 8
+	roomSpawns[11] = 9
+	roomSpawns[12] = 8
+	roomSpawns[13] = 9
+	roomSpawns[14] = 6
 	roomSpawns[15] = 1
 	roomSpawns[16] = 1
 
 	//The Number of enemies spawn in each room is:
 	//roomPerSpawn[i] * number of spawners placed in map
-	roomPerSpawn[0] = 3
-	roomPerSpawn[1] = 5
-	roomPerSpawn[2] = 3
-	roomPerSpawn[3] = 3
-	roomPerSpawn[4] = 3
-	roomPerSpawn[5] = 3
-	roomPerSpawn[6] = 3
-	roomPerSpawn[7] = 3
-	roomPerSpawn[8] = 3
-	roomPerSpawn[9] = 3
-	roomPerSpawn[10] = 3
-	roomPerSpawn[11] = 3
-	roomPerSpawn[12] = 3
-	roomPerSpawn[13] = 3
-	roomPerSpawn[14] = 3
-	roomPerSpawn[15] = 1
-	roomPerSpawn[16] = 1
+	roomPerSpawn[0] = 3 // 0
+	roomPerSpawn[1] = 3 // 3
+	roomPerSpawn[2] = 2 // 3
+	roomPerSpawn[3] = 0 // 0
+	roomPerSpawn[4] = 3 // 4
+	roomPerSpawn[5] = 2 // 3
+	roomPerSpawn[6] = 2 // 4
+	roomPerSpawn[7] = 4 // 4
+	roomPerSpawn[8] = 1 // 3
+	roomPerSpawn[9] = 4 // 3
+	roomPerSpawn[10] = 2 // 4
+	roomPerSpawn[11] = 3 // 3
+	roomPerSpawn[12] = 2 // 4
+	roomPerSpawn[13] = 3 // 3
+	roomPerSpawn[14] = 2 // 3
+	roomPerSpawn[15] = 1 // 1
+	roomPerSpawn[16] = 1 // 1
 	roomPoints[0] = 0
-	roomPoints[1] = 3
-	roomPoints[2] = 5
+	roomPoints[1] = 1
+	roomPoints[2] = 1
 	roomPoints[3] = 0
-	roomPoints[4] = 1
+	roomPoints[4] = 2
 	roomPoints[5] = 1
 	roomPoints[6] = 1
-	roomPoints[7] = 2
-	roomPoints[8] = 0
+	roomPoints[7] = 3
+	roomPoints[8] = 1
 	roomPoints[9] = 2
 	roomPoints[10] = 1
-	roomPoints[11] = 2
-	roomPoints[12] = 2
+	roomPoints[11] = 1
+	roomPoints[12] = 1
 	roomPoints[13] = 2
-	roomPoints[14] = 2
+	roomPoints[14] = 1
 	roomPoints[15] = 0
 	roomPoints[16] = 2
 
@@ -716,24 +745,24 @@ DefaultProperties
 	 *  5: G6Bot_Boomer
 	 *  6: G6Bot_Rocker
 	 *  7: G6Bot_Healer
+	 *  8: G6Bot_Boss
 	 */
 	enemyTypes[0] = "0"
-	//enemyTypes[1] = "0001112233"
-	enemyTypes[1] = "0123456712"
-	enemyTypes[2] = "1111223355"
-	enemyTypes[3] = "1111223355"
+	enemyTypes[1] = "1111111333"
+	enemyTypes[2] = "1111133333"
+	enemyTypes[3] = "0"
 	enemyTypes[4] = "2222222222"
-	enemyTypes[5] = "1111223355"
-	enemyTypes[6] = "1111223355"
-	enemyTypes[7] = "1111223355"
-	enemyTypes[8] = "1111223355"
-	enemyTypes[9] = "1111223355"
-	enemyTypes[10] = "1111223355"
-	enemyTypes[11] = "1111223355"
-	enemyTypes[12] = "1111223355"
-	enemyTypes[13] = "1111223355"
-	enemyTypes[14] = "1111223355"
-	enemyTypes[15] = "1111223355"
+	enemyTypes[5] = "5555555555"
+	enemyTypes[6] = "0011133666"
+	enemyTypes[7] = "1111222555"
+	enemyTypes[8] = "4444444444"
+	enemyTypes[9] = "0011155577"
+	enemyTypes[10] = "1114446666"
+	enemyTypes[11] = "0004444555"
+	enemyTypes[12] = "1122223377"
+	enemyTypes[13] = "0111234567"
+	enemyTypes[14] = "0112334567"
+	enemyTypes[15] = "8888888888"
 	enemyTypes[16] = "0000000000"
 	mapZoom = 0.5
 	lastCheckPoint = 0;
@@ -765,4 +794,7 @@ DefaultProperties
 	bSkinType = true
 
 	bRespawning = False;
+	bSpecial = False;
+	cSpecial = 75;
+	cSpecialMax = 100;
 }

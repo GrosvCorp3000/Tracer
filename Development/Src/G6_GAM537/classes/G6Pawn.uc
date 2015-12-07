@@ -2,6 +2,24 @@ class G6Pawn extends UTPawn;
 
 var UTWeapon preHeld;
 
+event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+{
+	local G6PlayerController P;
+	local G6Bot B;
+
+	P = G6PlayerController (Controller);
+	B = G6Bot (EventInstigator);
+
+	if (P!=None && B!=None && !P.bSpecial) {
+		if (P.skills[2]==1)
+			P.cSpecial = clamp(P.cSpecial + float (Damage) * 0.22, 0, 100);
+		else
+			P.cSpecial = clamp(P.cSpecial + float (Damage) * 0.12, 0, 100);
+	}
+	
+	Super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+}
+
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
 	local G6PlayerController p;
@@ -30,6 +48,25 @@ simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface
 	}
 }
 
+simulated function StartFire(byte FireModeNum)
+{
+	local G6PlayerController PC;
+	PC = G6PlayerController(Controller);
+	
+	if(PC.bRespawning && bFeigningDeath && PC.bBattleMode){
+		PC.bRespawn = true;
+	}
+	if( bNoWeaponFIring )
+	{
+		return;
+	}
+
+	if( Weapon != None )
+	{
+		Weapon.StartFire(FireModeNum);
+	}
+}
+
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
 	local G6PlayerController PC;
@@ -37,6 +74,9 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	if (PC != None)
 	{
+		if (PC.bSpecial)
+			PC.toggleSpecial();
+		PC.cSpecial *= 0.5;
 		PC.AttemptRespawn();
 	}
 	return false;
@@ -59,9 +99,9 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 		}
 
 		if(p.skills[1] == 1){
-			HealthMax = 600;
-		}else if(p.skills[0] == 1){
 			HealthMax = 500;
+		}else if(p.skills[0] == 1){
+			HealthMax = 400;
 		}
 	
 		if(p.skills[6] == 1){
@@ -182,4 +222,5 @@ DefaultProperties
 	HealthMax = 300
 	GroundSpeed = 800
 	Mass = 380
+	JumpZ=+00450.000000
 }

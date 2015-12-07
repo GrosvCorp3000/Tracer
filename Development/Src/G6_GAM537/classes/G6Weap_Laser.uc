@@ -1192,70 +1192,62 @@ simulated state WeaponEquipping
 
 simulated function UpdateBeam(float DeltaTime)
 {
-	local Array<Vector>	StartTrace, EndTrace, AimDir;
-	local Array<ImpactInfo>	RealImpact, NearImpact;
-	local G6PlayerController p;
-	local int i, j, numLine;
-
-	numLine = 1;
-
-	p = G6PlayerController (Instigator.Controller);
-
-	if (p != None && p.skills[4] == 1)
-		numLine = 3;
+	local Vector		StartTrace, EndTrace, AimDir;
+	local ImpactInfo	RealImpact, NearImpact;
+	local G6BPawn B;
+	local G6BPawn target;
+	local float dist, shortest;
+	local G6PlayerController P;
 
 	// define range to use for CalcWeaponFire()
+	StartTrace	= Instigator.GetWeaponStartTraceLocation();
+	AimDir = Vector(GetAdjustedAim( StartTrace ));
+	EndTrace	= StartTrace + AimDir * 500;
 
-	for (i=0; i<numLine; i++) {
-		StartTrace[i] = Instigator.GetWeaponStartTraceLocation();
-		AimDir[i] = Vector(GetAdjustedAim( StartTrace[i] ));
-	}
-	EndTrace = InstantFireEndTraceA(StartTrace);
-
-	for (j=0; j<StartTrace.Length; j++)
+	foreach AllActors( class'G6PlayerController', P )
 	{
-		// Trace a shot
-		RealImpact[j] = CalcWeaponFire( StartTrace[j], EndTrace[j] );
-		bUsingAimingHelp = false;
-
-		if ( (RealImpact[j].HitActor == None) || !RealImpact[j].HitActor.bProjTarget )
+		if (P != None && P.skills[4] == 1)
 		{
-			// console aiming help
-			NearImpact[j] = InstantAimHelp(StartTrace[j], EndTrace[j], RealImpact[j]);
-
+			foreach AllActors( class'G6BPawn', B )
+			{
+				dist = VSize(B.Location - EndTrace);
+				if (B.IsAliveAndWell() && dist < 320) {
+					if (target == none || dist < shortest) {
+						target = B;
+						shortest = dist;
+					}
+				}
+			}
 		}
-		if ( NearImpact[j].HitActor != None )
-		{
-			bUsingAimingHelp = true;
-			ProcessBeamHit(StartTrace[j], AimDir[j], NearImpact[j], DeltaTime);
-			UpdateBeamEmitter(NearImpact[j].HitLocation, NearImpact[j].HitNormal, NearImpact[j].HitActor);
-		}
-		else
-		{
-			// Allow children to process the hit
-			ProcessBeamHit(StartTrace[j], AimDir[j], RealImpact[j], DeltaTime);
-			UpdateBeamEmitter(RealImpact[j].HitLocation, RealImpact[j].HitNormal, RealImpact[j].HitActor);
-		}
-	}
-}
-
-simulated function Array<vector> InstantFireEndTraceA(Array<vector> StartTrace)
-{
-	local Array<vector> EndTrace;
-	local rotator tRotator;
-
-	EndTrace[0] = StartTrace[0] + vector(GetAdjustedAim(StartTrace[0])) * GetTraceRange();
-
-	if (StartTrace.Length > 1)
-	{
-		tRotator = GetAdjustedAim(StartTrace[0]);
-		tRotator.Yaw = tRotator.Yaw + 1500;
-		EndTrace[1] = StartTrace[1] + vector(tRotator) * GetTraceRange();
-		tRotator.Yaw = tRotator.Yaw - 3000;
-		EndTrace[2] = StartTrace[2] + vector(tRotator) * GetTraceRange();
-	}
+	}	
 	
-	return EndTrace;
+	if (target != None)
+		EndTrace = target.Location;
+
+	target = None;
+
+	// Trace a shot
+	RealImpact = CalcWeaponFire( StartTrace, EndTrace );
+	bUsingAimingHelp = false;
+
+	if ( (RealImpact.HitActor == None) || !RealImpact.HitActor.bProjTarget )
+	{
+		// console aiming help
+		NearImpact = InstantAimHelp(StartTrace, EndTrace, RealImpact);
+
+	}
+	if ( NearImpact.HitActor != None )
+	{
+		bUsingAimingHelp = true;
+		ProcessBeamHit(StartTrace, AimDir, NearImpact, DeltaTime);
+		UpdateBeamEmitter(NearImpact.HitLocation, NearImpact.HitNormal, NearImpact.HitActor);
+	}
+	else
+	{
+		// Allow children to process the hit
+		ProcessBeamHit(StartTrace, AimDir, RealImpact, DeltaTime);
+		UpdateBeamEmitter(RealImpact.HitLocation, RealImpact.HitNormal, RealImpact.HitActor);
+	}
 }
 
 defaultproperties
@@ -1329,7 +1321,7 @@ defaultproperties
 	LinkBreakDelay=0.5		// link will stay established for this long extra when blocked (so you don't have to worry about every last tree getting in the way)
 	WeaponLinkDistance=160.0
 
-	InstantHitDamage(1)=180
+	InstantHitDamage(1)=130
 	InstantHitDamageTypes(1)=class'UTDmgType_LinkBeam'
 
 	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Link_Cue'
@@ -1338,7 +1330,7 @@ defaultproperties
 	LockerAmmoCount=100
 	MaxAmmoCount=100
 	MomentumTransfer=50000.0
-	BeamAmmoUsePerSecond=3
+	BeamAmmoUsePerSecond=6
 	MinimumDamage=5.0
 
 	EffectSockets(0)=MuzzleFlashSocket
@@ -1358,7 +1350,7 @@ defaultproperties
 
 	TeamMuzzleFlashTemplates[0]=ParticleSystem'WP_LinkGun.Effects.P_FX_LinkGun_MF_Beam_Red'
 	TeamMuzzleFlashTemplates[1]=ParticleSystem'WP_LinkGun.Effects.P_FX_LinkGun_MF_Beam_Blue'
-	TeamMuzzleFlashTemplates[2]=ParticleSystem'WP_LinkGun.Effects.P_FX_LinkGun_MF_Beam'
+	TeamMuzzleFlashTemplates[2]=ParticleSystem'WP_LinkGun.Effects.P_FX_LinkGun_MF_Beam_Gold'
 	HighPowerMuzzleFlashTemplate=ParticleSystem'WP_LinkGun.Effects.P_FX_LinkGun_MF_Beam_Gold'
 
 	MuzzleFlashColor=(R=120,G=255,B=120,A=255)

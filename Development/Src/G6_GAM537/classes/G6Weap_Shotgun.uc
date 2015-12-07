@@ -123,20 +123,20 @@ simulated function InstantFire()
 DefaultProperties
 {
 	WeaponFireTypes[0] = EWFT_InstantHit
-	FireInterval[0] = 0.8
-	ShotCost[0] = 3
+	FireInterval[0] = 0.7
+	ShotCost[0] = 5
 	WeaponFireAnim[0]=WeaponFire
-	InstantHitDamage[0]=35
-	InstantHitMomentum[0]=80000
+	InstantHitDamage[0]=38
+	InstantHitMomentum[0]=100000
 	InstantHitDamageTypes[0]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
 
 	WeaponFireTypes[1] = EWFT_InstantHit
-	FireInterval[1] = 0.8
-	ShotCost[1] = 3
+	FireInterval[1] = 0.7
+	ShotCost[1] = 5
 	WeaponFireAnim[1]=WeaponFire
-	InstantHitDamage[1]=60
-	InstantHitMomentum[1]=80000
+	InstantHitDamage[1]=38
+	InstantHitMomentum[1]=100000
 	InstantHitDamageTypes[1]=class'UTDmgType_CicadaLaser'
 	WeaponFireSnd[1]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
 	

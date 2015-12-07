@@ -1,5 +1,43 @@
 class G6BPawn_Boss extends G6BPawn;
 
+var bool check1, check2, check3;
+
+event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+{
+	local float HealthPercent;
+	local G6Spawner_BossWave S;
+
+	HealthPercent = Health / float(HealthMax);
+
+	if (HealthPercent < 75 && check1) {
+		foreach AllActors( class'G6Spawner_BossWave', S )
+		{
+			S.BotsToSpawn = 2;
+			S.enemyGroup = 1;
+			S.bSpawn = True;
+		}
+		check1 = False;
+	} else if (HealthPercent < 50 && check2) {
+		foreach AllActors( class'G6Spawner_BossWave', S )
+		{
+			S.BotsToSpawn = 1;
+			S.enemyGroup = 2;
+			S.bSpawn = True;
+		}	
+		check2 = False;
+	} else if (HealthPercent < 25 && check3) {
+		foreach AllActors( class'G6Spawner_BossWave', S )
+		{
+			S.BotsToSpawn = 3;
+			S.enemyGroup = 3;
+			S.bSpawn = True;
+		}
+		check3 = False;
+	}
+	
+	Super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+}
+
 simulated function SetCharacterMeshInfo(SkeletalMesh SkelMesh, MaterialInterface HeadMaterial, MaterialInterface BodyMaterial)
 {
 	Mesh.SetSkeletalMesh(SkeletalMesh'VH_Manta.Mesh.SK_VH_Manta');
@@ -50,4 +88,8 @@ DefaultProperties
 	Mass = 500
 	Health=1500
 	HealthMax=1500
+
+	check1 = true
+	check2 = true
+	check3 = true
 }
