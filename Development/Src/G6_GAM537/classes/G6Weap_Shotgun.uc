@@ -2,6 +2,11 @@ class G6Weap_Shotgun extends UTWeapon;
 
 simulated function WeaponEmpty(){}
 
+function bool canStillFire()
+{
+	return AmmoCount >= ShotCost[0];
+}
+
 simulated function bool HasAnyAmmo()
 {
 	local G6PlayerController p;

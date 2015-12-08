@@ -97,6 +97,11 @@ var repnotify bool bFullPower;
 
 simulated function WeaponEmpty(){}
 
+function bool canStillFire()
+{
+	return AmmoCount >= 6;
+}
+
 simulated function bool HasAnyAmmo()
 {
 	local G6PlayerController p;

@@ -5,6 +5,11 @@ class G6Weap_RocketLauncher_Content extends G6Weap_RocketLauncher;
 
 simulated function WeaponEmpty(){}
 
+function bool canStillFire()
+{
+	return AmmoCount >= ShotCost[0];
+}
+
 simulated function bool HasAnyAmmo()
 {
 	local G6PlayerController p;

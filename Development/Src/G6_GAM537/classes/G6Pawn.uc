@@ -114,18 +114,21 @@ simulated function bool CalcCamera( float fDeltaTime, out vector out_CamLoc, out
 		if(p.skills[3] == 1){
 			if(p.Pawn.FindInventoryType(class'G6Weap_Laser') == None){
 				InvManager.CreateInventory(class'G6Weap_Laser');
+				p.weaponStatus[1] = 1;
 			}
 		}
 
 		if(p.skills[8] == 1){
 			if(p.Pawn.FindInventoryType(class'G6Weap_Shotgun') == None){
 				InvManager.CreateInventory(class'G6Weap_Shotgun');
+				p.weaponStatus[2] = 1;
 			}
 		}
 
 		if(p.skills[13] == 1){
 			if(p.Pawn.FindInventoryType(class'G6Weap_RocketLauncher_Content') == None){
 				InvManager.CreateInventory(class'G6Weap_RocketLauncher_Content');
+				p.weaponStatus[3] = 1;
 			}
 		}
 		

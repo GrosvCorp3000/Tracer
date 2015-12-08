@@ -7,6 +7,11 @@ simulated function bool HasAnyAmmo()
 	return true;
 }
 
+function bool canStillFire()
+{
+	return True;
+}
+
 simulated function Projectile ProjectileFire()
 {
 	local Array<vector> RealStartLoc;

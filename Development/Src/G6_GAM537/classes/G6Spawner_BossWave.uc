@@ -113,7 +113,7 @@ function UTBot SpawnBot()
 
 	foreach AllActors( class'G6PlayerController', P )
 	{
-		P.roomSpawns[16]++;
+		P.roomSpawns[15]++;
 	}
 
 	return NewBot;

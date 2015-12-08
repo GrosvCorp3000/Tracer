@@ -20,10 +20,11 @@ DefaultProperties
 		bPrecomputedLightingIsValid=TRUE
 	End Object
 	Components.Add(MyLight)
-	GroundSpeed=10000
+	GroundSpeed=5000
 	RotationRate=(Pitch=350000,Yaw=350000,Roll=350000)
 
 	Health=150
 	HealthMax=150
 	Mass=200
+	JumpZ=+00435.000000
 }

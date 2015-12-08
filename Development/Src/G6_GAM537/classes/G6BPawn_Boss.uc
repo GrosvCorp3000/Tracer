@@ -9,7 +9,7 @@ event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vec
 
 	HealthPercent = Health / float(HealthMax);
 
-	if (HealthPercent < 75 && check1) {
+	if (HealthPercent < 0.75 && check1) {
 		foreach AllActors( class'G6Spawner_BossWave', S )
 		{
 			S.BotsToSpawn = 2;
@@ -17,7 +17,7 @@ event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vec
 			S.bSpawn = True;
 		}
 		check1 = False;
-	} else if (HealthPercent < 50 && check2) {
+	} else if (HealthPercent < 0.5 && check2) {
 		foreach AllActors( class'G6Spawner_BossWave', S )
 		{
 			S.BotsToSpawn = 1;
@@ -25,7 +25,7 @@ event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vec
 			S.bSpawn = True;
 		}	
 		check2 = False;
-	} else if (HealthPercent < 25 && check3) {
+	} else if (HealthPercent < 0.25 && check3) {
 		foreach AllActors( class'G6Spawner_BossWave', S )
 		{
 			S.BotsToSpawn = 3;

@@ -9,6 +9,9 @@ var String MapLocationName;
 var Vector PawnLocation;
 var LinearColor LC_White;
 var LinearColor LC_Yellow;
+var LinearColor LC_Red;
+var LinearColor LC_Blue;
+var LinearColor LC_Green;
 var intPoint mousePos;
 
 /**
@@ -33,6 +36,8 @@ function DrawHUD()
 {
 	local vector playerProject;
 	local vector BossProject;
+	local vector aimLocation;
+	local vector aimProject;
 	local Vector2D TextSize;
 	local G6PlayerController p;
 	local G6PlayerInput p_input;
@@ -90,6 +95,29 @@ function DrawHUD()
 
 	super.DrawHUD();
 
+	//Draw aiming recticle on screen
+	aimLocation = p.pawn.Location + vector(p.Pawn.Rotation) * 300;
+	aimProject = Canvas.Project(aimLocation);
+	Canvas.SetPos(aimProject.X, aimProject.Y, aimProject.Z);
+	switch (p.currentWeapon)
+	{
+		case 1:
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 31, 22, 216, 102, 56, 40, LC_Green);
+			break;
+		case 2:
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 31, 22, 216, 102, 56, 40, LC_Yellow);
+			break;
+		case 3:
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 31, 22, 216, 102, 56, 40, LC_Blue);
+			break;
+		case 4:
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 31, 22, 216, 102, 56, 40, LC_Red);
+			break;
+		default:
+			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseA', 31, 22, 216, 102, 56, 40, LC_White);
+			break;
+	}
+
 	if (p.debug) {
 		
 		Canvas.SetPos(SizeX * 0.1, SizeY * 0.1);
@@ -103,6 +131,10 @@ function DrawHUD()
 		Canvas.DrawText("Camera Offset X: "$p.camOffset.X);
 		Canvas.DrawText("Camera Offset Y: "$p.camOffset.Y);
 		Canvas.DrawText("Camera Offset Z: "$p.camOffset.Z);
+
+		Canvas.DrawText("Aim Location X: "$AimLocation.X);
+		Canvas.DrawText("Aim Location Y: "$AimLocation.Y);
+		Canvas.DrawText("Aim Location Z: "$AimLocation.Z);
 
 		Canvas.DrawText("Player Location X: "$p.Pawn.Location.X);
 		Canvas.DrawText("Player Location Y: "$p.Pawn.Location.Y);
@@ -125,6 +157,7 @@ function DrawHUD()
 		Canvas.DrawText("Weapon Ammo: "$cur_weap.GetAmmoCount());
 		Canvas.DrawText("Weapon Max Ammo: "$cur_weap.MaxAmmoCount);
 	}
+
 
 	//Determine the location
 	PawnLocation = p.Pawn.Location;
@@ -703,5 +736,8 @@ DefaultProperties
 	intColorBlink = 0
 	ColorBlinkPositive = 1
 	LC_White=(R=1.0,G=1.0,B=1.0,A=1.0)
-	Lc_Yellow=(R=0.8,G=0.8,B=0.0,A=1.0)
+	LC_Yellow=(R=0.8,G=0.8,B=0.0,A=1.0)
+	LC_Red=(R=1.0,G=0,B=0,A=1.0)
+	LC_Blue=(R=0,G=0,B=1.0,A=1.0)
+	LC_Green=(R=0.2,G=0.6,B=0.7,A=1.0)
 }

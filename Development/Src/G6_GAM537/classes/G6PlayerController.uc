@@ -85,6 +85,9 @@ var bool bRespawn;
  */
 var String enemyTypes[17];
 
+//Just a check to see if the player has purchased upgraded this weapon;
+var int weaponStatus[4];
+
 var vector camOffset;
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
@@ -164,7 +167,7 @@ exec function StopFire( optional byte FireModeNum )
 
 exec function SwitchWeapon(byte T)
 {
-	if(!bSkill && T >= 1 && T <= 4) {
+	if(!bSkill && T >= 1 && T <= 4 && weaponStatus[T-1]==1) {
 		currentWeapon = T;
 		super.SwitchWeapon(T);
 		curWeapon = UTWeapon (Pawn.Weapon);
@@ -230,6 +233,13 @@ exec function toggleSpecial()
 		WorldInfo.Game.SetGameSpeed(1);
 		ToggleCam();
 	}
+}
+
+
+exec function giveSpecial()
+{
+	if (!bSpecial)
+		cSpecial=95;
 }
 
 exec function ToggleCam() 
@@ -691,8 +701,8 @@ DefaultProperties
 	roomSpawns[8] = 3
 	roomSpawns[9] = 12
 	roomSpawns[10] = 8
-	roomSpawns[11] = 9
-	roomSpawns[12] = 8
+	roomSpawns[11] = 12
+	roomSpawns[12] = 12
 	roomSpawns[13] = 9
 	roomSpawns[14] = 6
 	roomSpawns[15] = 1
@@ -711,29 +721,29 @@ DefaultProperties
 	roomPerSpawn[8] = 1 // 3
 	roomPerSpawn[9] = 4 // 3
 	roomPerSpawn[10] = 2 // 4
-	roomPerSpawn[11] = 3 // 3
-	roomPerSpawn[12] = 2 // 4
+	roomPerSpawn[11] = 4 // 3
+	roomPerSpawn[12] = 3 // 4
 	roomPerSpawn[13] = 3 // 3
 	roomPerSpawn[14] = 2 // 3
 	roomPerSpawn[15] = 1 // 1
 	roomPerSpawn[16] = 1 // 1
 	roomPoints[0] = 0
-	roomPoints[1] = 1
+	roomPoints[1] = 2
 	roomPoints[2] = 1
 	roomPoints[3] = 0
-	roomPoints[4] = 2
-	roomPoints[5] = 1
-	roomPoints[6] = 1
-	roomPoints[7] = 3
-	roomPoints[8] = 1
-	roomPoints[9] = 2
-	roomPoints[10] = 1
-	roomPoints[11] = 1
-	roomPoints[12] = 1
-	roomPoints[13] = 2
-	roomPoints[14] = 1
+	roomPoints[4] = 3
+	roomPoints[5] = 2
+	roomPoints[6] = 2
+	roomPoints[7] = 5
+	roomPoints[8] = 2
+	roomPoints[9] = 3
+	roomPoints[10] = 2
+	roomPoints[11] = 2
+	roomPoints[12] = 2
+	roomPoints[13] = 3
+	roomPoints[14] = 2
 	roomPoints[15] = 0
-	roomPoints[16] = 2
+	roomPoints[16] = 0
 
 	/*
 	 * Enemy Type:
@@ -754,12 +764,12 @@ DefaultProperties
 	enemyTypes[4] = "2222222222"
 	enemyTypes[5] = "5555555555"
 	enemyTypes[6] = "0013666666"
-	enemyTypes[7] = "1111222555"
+	enemyTypes[7] = "1122345556"
 	enemyTypes[8] = "4444444444"
 	enemyTypes[9] = "0011155577"
 	enemyTypes[10] = "1114446666"
-	enemyTypes[11] = "0004444555"
-	enemyTypes[12] = "1122223377"
+	enemyTypes[11] = "0004445577"
+	enemyTypes[12] = "1122344677"
 	enemyTypes[13] = "0111234567"
 	enemyTypes[14] = "0112334567"
 	enemyTypes[15] = "8888888888"
@@ -793,8 +803,13 @@ DefaultProperties
 	InputClass = class'G6PlayerInput'
 	bSkinType = true
 
-	bRespawning = False;
-	bSpecial = False;
-	cSpecial = 75;
-	cSpecialMax = 100;
+	bRespawning = False
+	bSpecial = False
+	cSpecial = 75
+	cSpecialMax = 100
+
+	weaponStatus[0] = 1
+	weaponStatus[1] = 0
+	weaponStatus[2] = 0
+	weaponStatus[3] = 0
 }
