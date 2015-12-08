@@ -2,6 +2,25 @@ class G6BPawn_Boss extends G6BPawn;
 
 var bool check1, check2, check3;
 
+function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+	local G6PlayerController PC;
+	local G6Spawner_BossWave S;
+
+	foreach AllActors( class'G6PlayerController', PC )
+	{
+		PC.KillAllEnemies();
+	}
+
+	foreach AllActors( class'G6Spawner_BossWave', S )
+	{
+		S.bSpawn = False;
+	}
+	Super.Died(Killer, damageType, HitLocation);
+
+	return false;
+}
+
 event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
 	local float HealthPercent;
@@ -84,10 +103,10 @@ DefaultProperties
 	Components.Add(MyFlashLight)
 
 	RotationRate=(Pitch=80000,Yaw=80000,Roll=80000)
-	GroundSpeed=850
+	GroundSpeed=950
 	Mass = 500
-	Health=1500
-	HealthMax=1500
+	Health=2500
+	HealthMax=2500
 
 	check1 = true
 	check2 = true

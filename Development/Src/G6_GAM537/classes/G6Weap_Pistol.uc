@@ -70,7 +70,7 @@ defaultproperties
 	FireOffset=(X=12,Y=10,Z=-10)
 
 	WeaponFireTypes(0)=EWFT_Projectile
-	WeaponProjectiles(0)=class'UTProj_LinkPlasma' // UTProj_LinkPowerPlasma if linked (see GetProjectileClass() )
+	WeaponProjectiles(0)=class'G6Proj_Pistol' // UTProj_LinkPowerPlasma if linked (see GetProjectileClass() )
 
 	WeaponEquipSnd=SoundCue'A_Weapon_Link.Cue.A_Weapon_Link_RaiseCue'
 	WeaponPutDownSnd=SoundCue'A_Weapon_Link.Cue.A_Weapon_Link_LowerCue'

@@ -21,7 +21,7 @@ simulated function UpdateBeam(float DeltaTime)
 	// define range to use for CalcWeaponFire()
 	StartTrace	= Instigator.GetWeaponStartTraceLocation();
 	AimDir = Vector(GetAdjustedAim( StartTrace ));
-	EndTrace	= StartTrace + AimDir * 300;
+	EndTrace	= StartTrace + AimDir * 350;
 
 	foreach AllActors( class'G6BPawn', B )
 	{
@@ -75,7 +75,7 @@ DefaultProperties
 	FireInterval(1)=+1
 	ShotCost[0] = 0
 	ShotCost[1] = 0
-	WeaponRange=550
+	WeaponRange=650
 	AmmoCount = 500
 	MaxAmmoCount = 500
 	BeamAmmoUsePerSecond=0.5

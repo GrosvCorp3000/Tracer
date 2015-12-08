@@ -20,9 +20,9 @@ function Timer()
 {
 	local int random;
 
-	random = Rand(12);
+	random = Rand(17);
 
-	if (!bSpawn || BotsToSpawn <= 0 || random < 5)
+	if (!bSpawn || BotsToSpawn <= 0 || random <= 5)
 		return;
 
 	if (SpawnBot() != None)	BotsToSpawn--;

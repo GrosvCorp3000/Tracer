@@ -20,6 +20,7 @@ function G6BPawn findPatient()
 {
 	local G6BPawn l_target;
 	local G6BPawn B;
+	local G6BPawn_Healer H;
 	local float lowestHealth;
 	local float curTargetHealth;
 	local float distance;
@@ -28,7 +29,8 @@ function G6BPawn findPatient()
 
 	foreach AllActors( class'G6BPawn', B )
 	{
-		if (B!=Pawn && B.IsAliveAndWell()) {
+		H = G6BPawn_Healer (B);
+		if (B!=Pawn && B.IsAliveAndWell() && H==None) {
 			curTargetHealth = B.Health / float(B.HealthMax);
 			distance = VSize(B.Location - Pawn.location);
 			if (l_target == none) {

@@ -83,9 +83,9 @@ function DrawHUD()
 	//Update the Special Values and Bar
 	if (p.bSpecial) {
 		if (p.skills[12] == 1)
-			specialRand = Rand(7);
+			specialRand = Rand(8);
 		else
-			specialRand = Rand(3);
+			specialRand = Rand(5);
 		if (specialRand==1)
 			p.cSpecial = (Clamp(p.cSpecial - 0.00001, 0, 100));
 		if (p.cSpecial <= 1)
@@ -211,6 +211,12 @@ function DrawHUD()
 	}else {
 		Canvas.SetDrawColorStruct(GreenColor);
 		Canvas.DrawText("Cleared: "$MapLocationName,,PlayerNameScale * 1.1 / RatioX,PlayerNameScale * 1.1 / RatioY);
+		if(p.curRoom == 15){
+			Canvas.Font = PlayerFont;
+			Canvas.SetDrawColorStruct(WhiteColor);
+			Canvas.SetPos(SizeX*0.45 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
+			Canvas.DrawText("YOU WIN!",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
+		}
 	}
 
 	//Display Time
@@ -330,7 +336,16 @@ function DrawHUD()
 			Canvas.SetDrawColor(0,0,255);
 			Canvas.SetPos(60 - (TextSize.X * PlayerNameScale / RatioX),SizeY-152);
 			Canvas.DrawBox(150,32);
-
+			//Special Usable
+			Canvas.SetPos(60-(TextSize.X * PlayerNameScale / RatioX)+112,SizeY-152);
+			Canvas.DrawBox(1,32);
+			if(SpecialPercent < 0.75){
+				Canvas.SetDrawColor(64,64,96);
+			}else{
+				Canvas.SetDrawColor(156,156,255);
+			}
+			Canvas.SetPos(60-(TextSize.X * PlayerNameScale / RatioX)+130,SizeY-146);
+			Canvas.DrawText("F",,(PlayerNameScale/2) / RatioX,(PlayerNameScale/2) / RatioY);
 
 			//Draw Numbers
 			Canvas.Font = PlayerFont;
@@ -350,13 +365,15 @@ function DrawHUD()
 			//Energy Icon
 			Canvas.SetPos(SizeX * 0.025, SizeY-32);
 			DrawTileCentered(Texture2D'UI_HUD.HUD.UI_HUD_BaseB', 19, 30, 635, 267, 24, 38, LC_Yellow);
+			//Special Icon
+			Canvas.SetPos(SizeX * 0.025, SizeY-136);
+			DrawTileCentered(Texture2D'UDKHUD.Time', 48, 48, 0, 0, 64, 64, LC_Blue);
 		}
 		
 		
 	}else{
 		Canvas.Font = PlayerFont;
 		Canvas.SetDrawColorStruct(WhiteColor);
-		Canvas.TextSize(playerHealth, TextSize.X, TextSize.Y);
 		Canvas.SetPos(SizeX*0.355 - (TextSize.X * PlayerNameScale / RatioX), SizeY*0.4);
 		Canvas.DrawText("YOU ARE DEAD",,PlayerNameScale * 2 / RatioX,PlayerNameScale * 2 / RatioY);
 	}
@@ -370,6 +387,9 @@ function DrawHUD()
 		Canvas.SetDrawColor(200, 200, 225);
 	}else{
 		Canvas.SetDrawColor(255,255,255);
+	}
+	if(p.skills[4] == 1 && p.skills[9] == 1 && p.skills[14] == 1){
+		Canvas.SetDrawColor(255,215,0);
 	}
 	if(p.currentWeapon == 1){
 		Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
@@ -387,6 +407,9 @@ function DrawHUD()
 		}else{
 			Canvas.SetDrawColor(255,255,255);
 		}
+		if(p.skills[4] == 1){
+			Canvas.SetDrawColor(255,215,0);
+		}
 		if(p.currentWeapon == 2){
 			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
 		}
@@ -403,6 +426,9 @@ function DrawHUD()
 		}else{
 			Canvas.SetDrawColor(255,255,255);
 		}
+		if(p.skills[9] == 1){
+			Canvas.SetDrawColor(255,215,0);
+		}
 		if(p.currentWeapon == 3){
 			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);
 		}
@@ -418,6 +444,9 @@ function DrawHUD()
 			Canvas.SetDrawColor(200, 200, 225);
 		}else{
 			Canvas.SetDrawColor(255,255,255);
+		}
+		if(p.skills[14] == 1){
+			Canvas.SetDrawColor(255,215,0);
 		}
 		if(p.currentWeapon == 4){
 			Canvas.DrawBox(weaponTex.SizeX * weaponUIscale * 0.5, SizeY*0.05);

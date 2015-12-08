@@ -2,6 +2,8 @@ class G6BProj_Sword extends UTProj_LinkPlasma;
 
 DefaultProperties
 {
+	ProjFlightTemplate=None
+	ProjExplosionTemplate=None
 	MaxEffectDistance=1000.0
 
 	LifeSpan=0.05

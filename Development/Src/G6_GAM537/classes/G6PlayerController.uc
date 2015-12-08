@@ -66,10 +66,9 @@ var string skillNames[15];
 var int skillRequirement[15];
 
 //Checkpoint Variables
-var int cpExp;
-var int cpLevel;
 var int cpSkPts;
 var int cpSkills[15];
+var float cpSpecial;
 var int cpHallExplored[19];
 var int cpRoomExplored[17];
 var int cpRoomCleared[17];
@@ -89,6 +88,9 @@ var String enemyTypes[17];
 var int weaponStatus[4];
 
 var vector camOffset;
+var int camX;
+var int camY;
+var int camZ;
 
 //This fixes weapons' projetiles to pawn's rotation, not the camera
 function Rotator GetAdjustedAimFor( Weapon W, vector StartFireLoc )
@@ -124,7 +126,24 @@ function UpdateRotation( float DeltaTime )
 		if ( Pawn != None )
 			Pawn.FaceRotation(NewRotation, deltatime);
 	}
-	
+	if(camOffset.X != camX){
+		camOffset.X = camOffset.X - (camOffset.X - camX)/4;
+		if((camOffset.X - camX < 0.005 && camOffset.X > camX) || (camX - camOffset.X < 0.005 && camOffset.X < camX)){
+			camOffset.X = camX;
+		}
+	}
+	if(camOffset.Y != camY){
+		camOffset.Y = camOffset.Y - (camOffset.Y - camY)/4;
+		if((camOffset.Y - camY < 0.005 && camOffset.Y > camY) || (camY - camOffset.Y < 0.005 && camOffset.Y < camY)){
+			camOffset.Y = camY;
+		}
+	}
+	if(camOffset.Z != camZ){
+		camOffset.Z = camOffset.Z - (camOffset.Z - camZ)/4;
+		if((camOffset.Z - camZ < 0.005 && camOffset.Z > camZ) || (camZ - camOffset.Z < 0.005 && camOffset.Z < camZ)){
+			camOffset.Z = camZ;
+		}
+	}
 }
 
 exec function PrevWeapon() {
@@ -228,10 +247,12 @@ exec function toggleSpecial()
 	if (bSpecial) {
 		WorldInfo.Game.SetGameSpeed(0.25);
 		ToggleCam();
+		PlaySound(SoundCue'A_Pickups_Powerups.PowerUps.A_Powerup_Berzerk_EndCue');
 	}
-	else {
+	else if(WorldInfo.Game.GameSpeed != 1){
 		WorldInfo.Game.SetGameSpeed(1);
 		ToggleCam();
+		PlaySound(SoundCue'A_Pickups_Powerups.PowerUps.A_Powerup_Berzerk_PickupCue');
 	}
 }
 
@@ -245,13 +266,13 @@ exec function giveSpecial()
 exec function ToggleCam() 
 {
 	if (bSpecial) {
-		camOffset.X = -300;
-		camOffset.Y = 100;
-		camOffset.Z = 300;
+		camX = -300;
+		camY = 200;
+		camZ = 400;
 	} else {
-		camOffset.X = -400;
-		camOffset.Y = 300;
-		camOffset.Z = 500;
+		camX = -400;
+		camY = 300;
+		camZ = 500;
 	}
 }
 exec function ToggleBattle() 
@@ -269,9 +290,12 @@ exec function ToggleBattle()
 
 exec function KillAllEnemies()
 {
-	local G6BPawn enemyPawn;
-	foreach AllActors(class'G6BPawn', enemyPawn){
-		enemyPawn.Suicide();
+	local G6Bot enemyPawn;
+	local G6Bot_Boss Boss;
+	foreach AllActors(class'G6Bot', enemyPawn){
+		Boss = G6Bot_Boss(enemyPawn);
+		if (Boss==None)
+			enemyPawn.Pawn.Suicide();
 	}
 }
 
@@ -332,6 +356,7 @@ exec function CheckPointSave()
 	local int counter;
 
 	cpSkPts = cSkPts;
+	cpSpecial = cSpecial;
 	for(counter = 0; counter < 15; counter++){
 		cpSkills[counter] = skills[counter];
 	}
@@ -358,7 +383,12 @@ exec function TeleportTo(int T)
 {
 	if (!bBattleMode) {
 		Pawn.SetLocation(spawnPoints[T]);
-	}	
+	}
+}
+
+exec function SetSkillPoints(int T)
+{
+	cSkPts = T;
 }
 
 exec function CheckPointLoad()
@@ -366,6 +396,7 @@ exec function CheckPointLoad()
 	local int counter;
 
 	cSkPts = cpSkPts;
+	cSpecial = cpSpecial;
 	for(counter = 0; counter < 15; counter++){
 		skills[counter] = cpSkills[counter];
 	}
@@ -509,7 +540,7 @@ ignores SeePlayer, HearNoise, Bump;
 
 DefaultProperties
 {
-	cSkPts = 10
+	cSkPts = 0
 	skills[0] = 0
 	skills[1] = 0
 	skills[2] = 0
@@ -698,7 +729,7 @@ DefaultProperties
 	roomSpawns[5] = 6
 	roomSpawns[6] = 8
 	roomSpawns[7] = 16
-	roomSpawns[8] = 3
+	roomSpawns[8] = 6
 	roomSpawns[9] = 12
 	roomSpawns[10] = 8
 	roomSpawns[11] = 12
@@ -718,7 +749,7 @@ DefaultProperties
 	roomPerSpawn[5] = 2 // 3
 	roomPerSpawn[6] = 2 // 4
 	roomPerSpawn[7] = 4 // 4
-	roomPerSpawn[8] = 1 // 3
+	roomPerSpawn[8] = 2 // 3
 	roomPerSpawn[9] = 4 // 3
 	roomPerSpawn[10] = 2 // 4
 	roomPerSpawn[11] = 4 // 3
@@ -735,7 +766,7 @@ DefaultProperties
 	roomPoints[5] = 2
 	roomPoints[6] = 2
 	roomPoints[7] = 5
-	roomPoints[8] = 2
+	roomPoints[8] = 1
 	roomPoints[9] = 3
 	roomPoints[10] = 2
 	roomPoints[11] = 2
@@ -759,14 +790,14 @@ DefaultProperties
 	 */
 	enemyTypes[0] = "0"
 	enemyTypes[1] = "1111111333"
-	enemyTypes[2] = "1111133333"
+	enemyTypes[2] = "1111333377"
 	enemyTypes[3] = "0"
 	enemyTypes[4] = "2222222222"
 	enemyTypes[5] = "5555555555"
-	enemyTypes[6] = "0013666666"
+	enemyTypes[6] = "001223666"
 	enemyTypes[7] = "1122345556"
 	enemyTypes[8] = "4444444444"
-	enemyTypes[9] = "0011155577"
+	enemyTypes[9] = "0011155566"
 	enemyTypes[10] = "1114446666"
 	enemyTypes[11] = "0004445577"
 	enemyTypes[12] = "1122344677"
@@ -782,7 +813,7 @@ DefaultProperties
 	spawnPoints[2] = (X=-6143,Y=-1535,Z=-464.8500)
 	spawnPoints[3] = (X=-5695,Y=-1151,Z=-464.8500)
 	spawnPoints[4] = (X=-7807,Y=256,Z=-464.8500)
-	spawnPoints[5] = (X=5247,Y=0,Z=-480.8500)
+	spawnPoints[5] = (X=-5247,Y=0,Z=-480.8500)
 	spawnPoints[6] = (X=-5375,Y=256,Z=-336.8500)
 	spawnPoints[7] = (X=-4863,Y=2688,Z=-464.8500)
 	spawnPoints[8] = (X=-2047,Y=128,Z=-480.8500)
@@ -799,6 +830,9 @@ DefaultProperties
 	bMapPan = false
 	bCamType = true
 	camOffset = (X=-400, Y=300, z=500)
+	camX = -400
+	camY = 300
+	camZ = 500
 	//camOffset = (X=-300, Y=100, z=500)
 	InputClass = class'G6PlayerInput'
 	bSkinType = true

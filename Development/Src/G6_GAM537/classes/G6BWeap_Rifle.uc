@@ -13,8 +13,8 @@ DefaultProperties
 	WeaponFireTypes(1)=EWFT_InstantHit
 	InstantHitDamageTypes(0)=class'UTDmgType_ShockPrimary'
 	InstantHitDamageTypes(1)=class'UTDmgType_ShockPrimary'
-	FireInterval(0)=+3
-	FireInterval(1)=+3
+	FireInterval(0)=+2.75
+	FireInterval(1)=+2.75
 	ShotCost[0] = 0
 	ShotCost[1] = 0
 	ShouldFireOnRelease(0)=0
