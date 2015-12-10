@@ -9,7 +9,7 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	foreach AllActors( class'G6PlayerController', PC )
 	{
-		PC.KillAllEnemies();
+		PC.KillAllEnemiesNoBoss();
 	}
 
 	foreach AllActors( class'G6Spawner_BossWave', S )

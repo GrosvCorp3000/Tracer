@@ -291,6 +291,14 @@ exec function ToggleBattle()
 exec function KillAllEnemies()
 {
 	local G6Bot enemyPawn;
+	foreach AllActors(class'G6Bot', enemyPawn){
+		enemyPawn.Pawn.Suicide();
+	}
+}
+
+exec function KillAllEnemiesNoBoss()
+{
+	local G6Bot enemyPawn;
 	local G6Bot_Boss Boss;
 	foreach AllActors(class'G6Bot', enemyPawn){
 		Boss = G6Bot_Boss(enemyPawn);
